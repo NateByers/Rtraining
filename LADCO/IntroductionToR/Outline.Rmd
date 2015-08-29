@@ -1,0 +1,68 @@
+---
+title: "Introduction to R"
+output: word_document
+---
+
+# Day 1
+
+## Basic Intro
+
+- Introductions
+- What is R, comparison to other software
+- How to download R and RStudio
+- How to use the command line and scripts
+- Installing and loading packages
+
+## Data
+
+- Data types (character, integer, numeric, logical)
+- Data structures (vectors, matrices, data frames)
+- Reading in data
+- Viewing data
+- Saving data
+
+## Language Basics
+
+- Basic syntax
+- Subsetting
+- How functions work
+
+## Conditionals and Loops
+
+- If statements
+- For loops
+- Apply functions
+
+# Day 2
+
+## Plotting
+
+- Base graphics
+- Lattice
+- ggplot2
+
+## Basic Statistics
+
+- Summary statistics
+- Tests
+
+## Regression
+
+- Building linear models
+- Prediction
+
+## Data Tranformation and QA
+
+- Find and replace
+- Numeric transformation
+- QA (tests and assertions)
+
+Notes on QA: Three kinds of mistakes
+
+- Neglected due diligence for package (e.g. is author qualified to develope a stats package)
+- Didn't read documentation and misused package
+- Messed up programming and didn't check your work
+
+Very easy to get a result and not check to see if you've done things correctly. Check your work. Some
+packages can help you set up a work flow for programming tests and assertions that will help you
+catch mistakes.
