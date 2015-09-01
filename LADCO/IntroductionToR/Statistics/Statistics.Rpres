@@ -1,0 +1,141 @@
+Basic Statistics
+========================================================
+author: 
+date: 
+navigation: section
+
+
+Topics
+========================================================
+
+- [Descriptive statistics](#/descriptive)
+- [Correlations](#/correlations)
+- [t-stests](#/t-tests)
+- [Nonparametric tests](#/nonparametric)
+
+
+Descriptive Statistics
+========================================================
+type: section
+id: descriptive
+
+Descriptive Statistics
+========================================================
+
+- R has self-explanatory functions for descriptive stats
+- `mean()`, `median()`, `sd()` 
+- Remember to use `na.rm = TRUE` if you have `NA`s
+
+Descriptive Statistics
+=======================================================
+
+```{r}
+library(region5air)
+data(chicago_air)
+mean(chicago_air$ozone, na.rm = TRUE)
+```
+
+Descriptive Statistics
+========================================================
+
+- It is also easy to get sums and means of the columns or rows
+in a `data.frame` using `colSums()`, `rowSums()`, `colmeans()`
+and `rowMeans()`
+
+```{r}
+colMeans(chicago_air[, 2:4], na.rm = TRUE)
+```
+
+Descriptive Statistics
+========================================================
+
+- The same output can be obtained using `sapply()`
+
+```{r}
+sapply(chicago_air[, 2:4], sd, na.rm = TRUE)
+```
+
+- The first argument is the data frame, the second is the function to
+apply to each column, and the third is an argument that is passed to the function
+
+Descriptive Statistics
+===========================================================
+
+- Use the `quantile()` function to get quantiles
+
+```{r}
+quantile(chicago_air$ozone, 
+         probs = c(0, .25, .5, .75, 1),
+         na.rm = TRUE)
+```
+
+
+Descriptive Statistics
+==========================================================
+
+- You can also get a quick overview of summary statistics using the 
+`summary()` function
+
+```{r}
+summary(chicago_air[, 2:4])
+```
+
+Descriptive Statistics
+========================================================
+
+- For data that are not continuous numeric values, it's useful to get the frequency
+of certain values in your data set
+
+- Here we look at the monitors and parameters in `airdata` 
+
+```{r, eval=FALSE}
+data(airdata)
+table(airdata[, c("site", "parameter")])
+```
+
+Descriptive Statistics
+========================================================
+
+```{r, echo=FALSE}
+data(airdata)
+table(airdata[, c("site", "parameter")])
+```
+
+Correlations
+========================================================
+type: section
+id: correlations
+
+Correlations
+========================================================
+
+- Use the `cor()` function to produce correlations
+
+```{r}
+cor(chicago_air[, 2:4], use = "complete.obs")
+```
+
+- `use = "complete.obs"` tells the function to just use records that
+are complete, i.e. no `NA`s
+
+Correlations
+========================================================
+
+- Use `cor(X, Y)` to get the correlations between the columns of 
+two data frames `X` and `Y`
+
+```{r}
+time <- airdata[, c("month", "weekday")]
+
+cor()
+```
+
+t-Tests
+========================================================
+type: section
+id: t-tests
+
+Nonparametric Tests
+========================================================
+type: section
+id: nonparametric
