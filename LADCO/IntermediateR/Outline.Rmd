@@ -1,0 +1,64 @@
+---
+title: "Intermediate R"
+output: word_document
+---
+
+# Day 1
+
+## Data Manipulation: dplyr
+
+- Introductions
+- Intro to dplyr
+- select()
+- filter()
+- summarize()
+
+## Data Manipulation: dplyr and tidyr
+
+- window functions
+- spread()
+- gather()
+
+## Merging: base and dplyr
+
+- Base merge()
+- inner_join()
+- left_join()
+- full_join()
+- anti_join()
+
+## Functions and the apply() family
+
+- Writing functions
+- apply()
+- lapply() and sapply()
+- mapply()
+
+# Day 2
+
+## Plotting
+
+- openair
+- wind roses
+- pollution roses
+- trellis
+
+## Spatial data
+
+- creating sp objects
+- spatial statistics
+
+## Maps
+
+- Plotting points
+- Plotting sp objects
+- heat maps
+
+## Interactive plots and maps
+
+- shiny
+
+## GitHub
+
+- If time allows
+
