@@ -11,7 +11,7 @@ This tutorial will cover the following functions in the `dplyr` package:
 - [select()](#select), selecting columns
 - [arrange()](#arrange), reordering rows
 - [filter()](#filter), filtering rows
-- [summarize()](#summarize), summarizing rows
+- [summarise()](#summarise), summarizing rows
 
 We will be using the `airdata` dataset from the `region5air` package.
 
@@ -90,9 +90,9 @@ d <- filter(airdata, parameter == 62101, poc == 1)
 dim(d)
 ```
 
-# Summarize rows with group_by() and summarize() {#summarize}
+# summarise rows with group_by() and summarise() {#summarise}
 
-Suppose we want to summarize the value for each day in `airdata`. The first thing we need to do is create a date column, so we use another handy-Hadley package, `stringr`. The `str_split_fixed` function will split a character vector and return a fixed number of columns.
+Suppose we want to summarise the value for each day in `airdata`. The first thing we need to do is create a date column, so we use another handy-Hadley package, `stringr`. The `str_split_fixed` function will split a character vector and return a fixed number of columns.
 
 ```{r}
 library(stringr)
@@ -106,7 +106,7 @@ The first column is the date, so we'll add that to `airdata`.
 airdata$date <- date_time[, 1]
 ```
 
-In base R, we can summarize the mean of each day by using the `tapply()` function (see `?tapply()`). Let's find the daily mean for a given site and a given parameter.
+In base R, we can summarise the mean of each day by using the `tapply()` function (see `?tapply()`). Let's find the daily mean for a given site and a given parameter.
 
 ```{r}
 ozone_site_A <- airdata[airdata$site == 840170311601 & airdata$parameter == 44201, ]
@@ -123,16 +123,16 @@ levels of these columns).
 d_daily_mean <- group_by(airdata, site, parameter, date)
 ```
 
-The `summarize()` function will split up the column by grouping together cells that have
+The `summarise()` function will split up the column by grouping together cells that have
 common factor levels in the site, parameter, and date columns.
 
 ```{r}
-d_daily_mean <- summarize(d_daily_mean, daily_mean = mean(value, na.rm = FALSE))
+d_daily_mean <- summarise(d_daily_mean, daily_mean = mean(value, na.rm = FALSE))
 head(d_daily_mean, 3)
 ```
 
 The resulting [data frame](#classes) has just three columns: site, parameter, date, and daily_mean. Instead
-of subsetting down to one site and one parameter before calculating the daily mean, `summarize()` will take
+of subsetting down to one site and one parameter before calculating the daily mean, `summarise()` will take
 all of the grouping information from the `group_by` function and calculate all of the daily values for
 each site and parameter.
 
