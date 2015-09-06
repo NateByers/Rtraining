@@ -1,0 +1,46 @@
+---
+title: "Merging"
+output: html_document
+---
+
+This turial will cover how to merge data frames using the base R and `dplyr`. 
+
+- [Base R `merge()`](#base)
+- [Merging with `dplyr`](#dplyr)
+
+We will be using AQS tables to merge with a summarized version of the `airdata` dataset
+from the `region5air` package.
+
+```{r, message=FALSE, warning=FALSE}
+library(region5air)
+library(dplyr)
+
+data(airdata)
+airdata$year <- substr(airdata$datetime, start = 1, stop = 4)
+air <- group_by(airdata, site, year, parameter, unit)
+air <- summarise(air, mean = mean(value, na.rm = TRUE))
+air
+```
+
+```{r, eval=FALSE}
+aqs_states <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv",
+                       skip = 1, stringsAsFactors = FALSE)
+head(aqs_states)
+```
+
+```{r, echo=FALSE}
+aqs_states <- read.csv("states.csv", stringsAsFactors = FALSE)
+head(aqs_states)
+```
+
+```{r, eval=FALSE}
+aqs_units <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/Units.csv",
+                      skip = 1, stringsAsFactors = FALSE)
+head(aqs_units)
+```
+
+```{r, echo=FALSE}
+aqs_units <- read.csv("units.csv", stringsAsFactors = FALSE)
+head(aqs_units)
+```
+
