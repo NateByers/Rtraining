@@ -68,6 +68,7 @@ img {
 <ul>
 <li><a href="#base">Base R <code>merge()</code></a></li>
 <li><a href="#dplyr">Merging with <code>dplyr</code></a></li>
+<li><a href="#filter">Filtering joins with <code>dplyr</code></a></li>
 </ul>
 <p>We will be using AQS tables to merge with a summarized version of the <code>airdata</code> dataset from the <code>region5air</code> package.</p>
 <pre class="r"><code>library(region5air)
@@ -75,24 +76,25 @@ library(dplyr)
 
 data(airdata)
 airdata$year &lt;- substr(airdata$datetime, start = 1, stop = 4)
-air &lt;- group_by(airdata, site, year, parameter, unit)
+airdata$state &lt;- substr(airdata$site, start = 4, stop = 5)
+air &lt;- group_by(airdata, site, state, year, parameter, unit)
 air &lt;- summarise(air, mean = mean(value, na.rm = TRUE))
 air</code></pre>
-<pre><code>## Source: local data frame [65 x 5]
-## Groups: site, year, parameter
+<pre><code>## Source: local data frame [65 x 6]
+## Groups: site, state, year, parameter
 ## 
-##            site year parameter unit       mean
-## 1  840170310001 2013     44201    7 0.02337084
-## 2  840170310001 2014     44201    7 0.02685007
-## 3  840170310032 2013     44201    7 0.03451101
-## 4  840170310032 2014     44201    7 0.03064563
-## 5  840170310064 2013     44201    7 0.02392692
-## 6  840170310076 2013     44201    7 0.02272494
-## 7  840170310076 2014     44201    7 0.02481797
-## 8  840170311003 2013     44201    7 0.02832126
-## 9  840170311003 2014     44201    7 0.02713999
-## 10 840170311601 2013     44201    7 0.02624174
-## ..          ...  ...       ...  ...        ...</code></pre>
+##            site state year parameter unit       mean
+## 1  840170310001    17 2013     44201    7 0.02337084
+## 2  840170310001    17 2014     44201    7 0.02685007
+## 3  840170310032    17 2013     44201    7 0.03451101
+## 4  840170310032    17 2014     44201    7 0.03064563
+## 5  840170310064    17 2013     44201    7 0.02392692
+## 6  840170310076    17 2013     44201    7 0.02272494
+## 7  840170310076    17 2014     44201    7 0.02481797
+## 8  840170311003    17 2013     44201    7 0.02832126
+## 9  840170311003    17 2014     44201    7 0.02713999
+## 10 840170311601    17 2013     44201    7 0.02624174
+## ..          ...   ...  ...       ...  ...        ...</code></pre>
 <pre class="r"><code>aqs_states &lt;- read.csv(&quot;https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv&quot;,
                        skip = 1, stringsAsFactors = FALSE)
 head(aqs_states)</code></pre>
@@ -113,6 +115,149 @@ head(aqs_units)</code></pre>
 ## 4    4   Nanograms/cubic meter (0 C)
 ## 5    5 Milligrams/cubic meter (25 C)
 ## 6    6  Milligrams/cubic meter (0 C)</code></pre>
+<div id="base" class="section level1">
+<h1>Merging in base R</h1>
+<p>Merging two data frames can be accomplished in base R using the <code>merge()</code> function. To merge, there must be one or more columns that the two tables have in common. If we wanted to merge the <code>air</code> dataset and the <code>aqs_states</code> table, we can see that the common column is <code>state</code> and <code>State.Code</code> respectively.</p>
+<p>The first two arguments of the <code>merge()</code> function are the two data frames to be merged. If there are column names that are the same in the two data frames, then the default behavior is to the merge on those column names, and no other parameter is required.</p>
+<p>As an example, let’s make a copy of the <code>aqs_states</code> table and change the <code>State.Code</code> name to <code>state</code>.</p>
+<pre class="r"><code>b_states &lt;- aqs_states
+names(b_states)[names(b_states) == &quot;State.Code&quot;] &lt;- &quot;state&quot;</code></pre>
+<p>Now we can merge by using just the two data frames as arguments.</p>
+<pre class="r"><code>b &lt;- merge(air, b_states)
+head(as.tbl(b))</code></pre>
+<pre><code>## Source: local data frame [6 x 11]
+## 
+##   state         site year parameter unit       mean State.Name State.Abbr
+## 1    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 2    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 3    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 4    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 5    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 6    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+<p>If there are no common names, then we must use the <code>by.x</code> and <code>by.y</code> parameters.</p>
+<pre class="r"><code>b &lt;- merge(air, aqs_states, by.x = &quot;state&quot;, by.y = &quot;State.Code&quot;)
+head(as.tbl(b))</code></pre>
+<pre><code>## Source: local data frame [6 x 11]
+## 
+##   state         site year parameter unit       mean State.Name State.Abbr
+## 1    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 2    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 3    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 4    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 5    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## 6    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
+## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+<p>The default operation of <code>merge()</code> is an inner join. This means that, in column(s) in common between the two data frames, only records that match will be kept. In the example above, only states with the state codes in the <code>aqs_states</code> data frame that were also in the <code>state</code> column of the <code>air</code> data frame were kept.</p>
+<pre class="r"><code>unique(air$state)</code></pre>
+<pre><code>## [1] &quot;17&quot; &quot;18&quot; &quot;55&quot;</code></pre>
+<pre class="r"><code>unique(aqs_states$State.Code)</code></pre>
+<pre><code>##  [1] &quot;01&quot; &quot;02&quot; &quot;04&quot; &quot;05&quot; &quot;06&quot; &quot;CC&quot; &quot;08&quot; &quot;09&quot; &quot;80&quot; &quot;10&quot; &quot;11&quot; &quot;12&quot; &quot;13&quot; &quot;66&quot;
+## [15] &quot;15&quot; &quot;16&quot; &quot;17&quot; &quot;18&quot; &quot;19&quot; &quot;20&quot; &quot;21&quot; &quot;22&quot; &quot;23&quot; &quot;24&quot; &quot;25&quot; &quot;26&quot; &quot;27&quot; &quot;28&quot;
+## [29] &quot;29&quot; &quot;30&quot; &quot;31&quot; &quot;32&quot; &quot;33&quot; &quot;34&quot; &quot;35&quot; &quot;36&quot; &quot;37&quot; &quot;38&quot; &quot;39&quot; &quot;40&quot; &quot;41&quot; &quot;42&quot;
+## [43] &quot;72&quot; &quot;44&quot; &quot;45&quot; &quot;46&quot; &quot;47&quot; &quot;48&quot; &quot;49&quot; &quot;50&quot; &quot;78&quot; &quot;51&quot; &quot;53&quot; &quot;54&quot; &quot;55&quot; &quot;56&quot;</code></pre>
+<pre class="r"><code>unique(b$state)</code></pre>
+<pre><code>## [1] &quot;17&quot; &quot;18&quot; &quot;55&quot;</code></pre>
+<p>You can also specify a left join or a right join if you would like to keep all of the records from one of the data frames. To more easily see how this works, we’ll create two small data frames.</p>
+<pre class="r"><code>monitors &lt;- read.table(header=T, text='
+  monitorid        lat       long                 
+          1  42.467573 -87.810047     
+          2  42.049148 -88.273029
+          3  39.110539 -90.324080
+                       ')
+
+pollutants &lt;- read.table(header=T, text='
+  pollutant   duration    monitorid                 
+      ozone         1h            1
+        so2         1h            1
+      ozone         8h            2
+        no2         1h            4
+                       ')</code></pre>
+<p>An inner join would keep only the monitors that are in common, which are 1 and 2.</p>
+<pre class="r"><code>merge(pollutants, monitors)</code></pre>
+<pre><code>##   monitorid pollutant duration      lat      long
+## 1         1     ozone       1h 42.46757 -87.81005
+## 2         1       so2       1h 42.46757 -87.81005
+## 3         2     ozone       8h 42.04915 -88.27303</code></pre>
+<p>Note that there is only one record for monitor 1 in the <code>monitors</code> data frame, but the information for that monitor is repeated in the output because there is more than one monitor id with the value 1 in the <code>pollutants</code> data frame.</p>
+<p>If we wanted to keep all of the pollutant information, even if there wasn’t a corresponding record in the <code>monitors</code> data frame, then we could do a left join by using the <code>all.x</code> parameter.</p>
+<pre class="r"><code>merge(pollutants, monitors, all.x = TRUE)</code></pre>
+<pre><code>##   monitorid pollutant duration      lat      long
+## 1         1     ozone       1h 42.46757 -87.81005
+## 2         1       so2       1h 42.46757 -87.81005
+## 3         2     ozone       8h 42.04915 -88.27303
+## 4         4       no2       1h       NA        NA</code></pre>
+<p>We can also keep all records from both data frames, which is called a full join. We use the <code>all</code> parameter.</p>
+<pre class="r"><code>merge(pollutants, monitors, all = TRUE)</code></pre>
+<pre><code>##   monitorid pollutant duration      lat      long
+## 1         1     ozone       1h 42.46757 -87.81005
+## 2         1       so2       1h 42.46757 -87.81005
+## 3         2     ozone       8h 42.04915 -88.27303
+## 4         3      &lt;NA&gt;     &lt;NA&gt; 39.11054 -90.32408
+## 5         4       no2       1h       NA        NA</code></pre>
+</div>
+<div id="merging-with-dplyr" class="section level1">
+<h1>Merging with <code id="dplyr">dplyr</code></h1>
+<p>The <code>dplyr</code> package has functions that can do all of the operations that <code>merge()</code> can. Similar to <code>merge()</code>, the functions in <code>dplyr</code> have you specify which colums to merge on, or it merges on any column names that are in common. However, there is one <code>by</code> parameter.</p>
+<pre class="r"><code>b &lt;- inner_join(air, aqs_states, by = c(&quot;state&quot; = &quot;State.Code&quot;))
+head(b)</code></pre>
+<pre><code>## Source: local data frame [6 x 11]
+## Groups: site, state, year, parameter
+## 
+##           site state year parameter unit       mean State.Name State.Abbr
+## 1 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## 2 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## 3 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## 4 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## 5 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## 6 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
+## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+<ul>
+<li><code>inner_join</code> Merge records that have shared values in the columns being merged on.</li>
+</ul>
+<pre class="r"><code>inner_join(pollutants, monitors)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre><code>##   pollutant duration monitorid      lat      long
+## 1     ozone       1h         1 42.46757 -87.81005
+## 2       so2       1h         1 42.46757 -87.81005
+## 3     ozone       8h         2 42.04915 -88.27303</code></pre>
+<ul>
+<li><code>left_join</code> Keep all records in the first data frame.</li>
+</ul>
+<pre class="r"><code>left_join(pollutants, monitors)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre><code>##   pollutant duration monitorid      lat      long
+## 1     ozone       1h         1 42.46757 -87.81005
+## 2       so2       1h         1 42.46757 -87.81005
+## 3     ozone       8h         2 42.04915 -88.27303
+## 4       no2       1h         4       NA        NA</code></pre>
+<ul>
+<li><code>full_join</code> Keep all records in both data frames.</li>
+</ul>
+<pre class="r"><code>full_join(pollutants, monitors)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre><code>##   pollutant duration monitorid      lat      long
+## 1     ozone       1h         1 42.46757 -87.81005
+## 2       so2       1h         1 42.46757 -87.81005
+## 3     ozone       8h         2 42.04915 -88.27303
+## 4       no2       1h         4       NA        NA
+## 5      &lt;NA&gt;     &lt;NA&gt;         3 39.11054 -90.32408</code></pre>
+</div>
+<div id="filtering-joins-with-dplyr" class="section level1">
+<h1>Filtering joins with <code id="filter">dplyr</code></h1>
+<p>Sometimes we would like to subset, or filter, a data frame based on the contents of another data frame. Suppose we wanted to keep the <code>pollutants</code> data frame in the same format, but only keep the records that also have a match in the <code>monitors</code> data frame. We can use the <code>semi_join()</code> function from the <code>dplyr</code> package.</p>
+<pre class="r"><code>semi_join(pollutants, monitors)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre><code>##   pollutant duration monitorid
+## 1     ozone       1h         1
+## 2       so2       1h         1
+## 3     ozone       8h         2</code></pre>
+<p>We may also want to know what records are in a data frame that do <em>not</em> match the records in another data frame. Suppose we want to know which monitors from the <code>monitors</code> data frame that are not also in the <code>pollutants</code> data frame. We can use the <code>anti_join</code> function.</p>
+<pre class="r"><code>anti_join(monitors, pollutants)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre><code>##   monitorid      lat      long
+## 1         3 39.11054 -90.32408</code></pre>
+</div>
 
 
 </div>
