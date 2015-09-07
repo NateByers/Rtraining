@@ -1,0 +1,78 @@
+---
+title: "Maps and Spatial Data Analysis"
+output: html_document
+---
+
+Many R packages have been developed to visualize and analyze spatial data. The best 
+comprehensive resource that I've found on this topic is the book
+[Applied Spatial Data Analysis with R](http://www.amazon.com/Applied-Spatial-Data-Analysis-Use/dp/1461476178). This tutorial relies heavily on that book.
+
+- [The sp package and Spatial* objects](#sp)
+- [Plotting spatial data](#plot)
+- [Importing GIS data](#GIS)
+- [Interpolation](#interpolation)
+
+# The `sp` package and `Spatial*` objects {#sp}
+
+The `sp` package is a foundational package for dealing with spatial data. It
+provides classes and methods for making S4 objects in R. (For an explanation of 
+S4 objects, see Hadley Wickham's page on object oriented programming in 
+[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)). The most basic is a `Spatial`
+object. This object just contains information for a boundary box and the coordinate system.
+
+## `Spatial`
+
+Let's create a boundary box in the Chicago area. We'll use the constructor function
+that has the same name as the class, `Spatial()`. The two arguments are `bbox` and
+`proj4string`. The `bbox` argument is for the bounding box. It takes a matrix
+with at least two rows, and the column names must be `min` and `max`. The first 
+row contains the eastings (x-axis, or the longitude) and the second row contains
+the northings (y-axis, or latitude). 
+
+
+```{r}
+# create a boundary box
+longitudes <- c(-88.156775, -87.589771)
+latitudes <- c(41.652208, 42.154143)
+bounding_box <- matrix(c(longitudes, latitudes), nrow = 2, byrow = TRUE,
+                       dimnames = list(NULL, c("min", "max")))
+```
+
+The second argument, `proj4string`, takes a string that specifies which projection
+the coordinates are in. See the [`proj4` package](https://cran.r-project.org/web/packages/proj4/) 
+for details on which strings to use. The simplest string is "+proj=longlat".
+
+```{r}
+projection <- "+proj=longlat" 
+```
+
+Now we can create the `Spatial` object. (The projection string must be wrapped in the 
+`CRS()` function).
+
+```{r}
+library(sp)
+chicago_sp <- Spatial(bbox = bounding_box, proj4string = CRS(projection))
+chicago_sp
+```
+
+## `SpatialPoints`
+
+A `Spatial` object isn't much good by itself, but it's the base object that other 
+sub-classes are built on. To see the list of sub-classes, use the `getClass()` function.
+
+```{r}
+getClass("Spatial")
+```
+
+A sub-class is a class whose objects contain all of the information in the parent class
+plus additional information. The most useful direct sub-class of `Spatial`, for our purposes,
+is `SpatialPoints`. Typically we will want to look at monitor locations, so we need to 
+represent those as points in a `SpatialPoints` object. We'll use the `airdata` dataset from
+the `region5air` package.
+
+```{r, message=FALSE}
+library(region5air)
+library(dplyr)
+data(airdata)
+as.tbl(airdata)
+```
