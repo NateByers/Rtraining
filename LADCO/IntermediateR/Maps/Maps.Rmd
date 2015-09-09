@@ -76,3 +76,71 @@ library(dplyr)
 data(airdata)
 as.tbl(airdata)
 ```
+
+Before we can create a `SpatialPoints` object, we need to know what projection the coordinates
+are in.
+
+```{r}
+unique(airdata$GISDatum)
+```
+
+Since there are two projects, we will split them up, then merge them by transforming one
+projection to another.
+
+```{r}
+air_wgs84 <- filter(airdata, GISDatum == "WGS84")
+air_nad83 <- filter(airdata, GISDatum == "NAD83")
+```
+
+The `SpatialPoints()` function has the same parameters as the `Spatial` function, except it
+also takes a matrix of coorinates for points. The matrix must have unique row names, eastings 
+must be in the first column, and northings must be in the second column. Here we create the
+coordinate matrices.
+
+```{r}
+air_wgs84_monitors <- unique(select(air_wgs84, site, lat, lon))
+air_wgs84_coords <- cbind(air_wgs84_monitors$lon, air_wgs84_monitors$lat)
+row.names(air_wgs84_coords) <- air_wgs84_monitors$site
+
+air_nad83_monitors <- unique(select(air_nad83, site, lat, lon))
+air_nad83_coords <- cbind(air_nad83_monitors$lon, air_nad83_monitors$lat)
+names(air_nad83_coords) <- air_nad83_monitors$site
+```
+
+Now we specify the projections.
+
+```{r}
+wgs84 <- CRS("+proj=longlat +ellpsWGS84")
+nad83 <- CRS("+proj=longlat +ellpsNAD83")
+```
+
+When we create the `SpatialPoints` object, if we don't specify the bounding box, then
+it will automatically be created, based on the extreme locations in the coordinate matrix.
+
+```{r}
+air_wgs84_spoints <- SpatialPoints(coords = air_wgs84_coords, proj4string = wgs84)
+air_nad83_spoints <- SpatialPoints(coords = air_nad83_coords, proj4string = nad83)
+```
+
+We can look at the bounding boxes by using the `bbox()` function.
+
+```{r}
+bbox(air_wgs84_spoints)
+bbox(air_nad83_spoints)
+```
+
+`spTransform()` will transform a `Spatial*` object from one coordinate reference system (CRS)
+to another. Here we change the object with the NAD83 projection to WGS84 and recombine
+with the other `SpatialPoints` object.
+
+```{r}
+air_spoints <- spTransform(air_nad83_spoints, CRSobj = wgs84)
+air_spoints <- rbind(air_spoints, air_wgs84_spoints)
+```
+
+## `SpatialPointsDataFrame`
+
+In many cases, you will not just want to plot locations of monitors on a map, but you will
+want to have data associated with each point. The `SpatialPointsDataFrame` object contains
+all of the information that a `SpatialPoints` object has, but is also contains a data frame
+of values associated with the coordinate points.
