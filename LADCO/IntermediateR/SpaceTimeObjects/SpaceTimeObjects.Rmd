@@ -1,0 +1,13 @@
+---
+title: "Space-Time Data Objects"
+output: html_document
+---
+
+In a previous tutorial, we learned how to create `Spatial*` objects using the 
+`sp` package. Those objects contained information about points in space, but
+they didn't contain any information about those points over time. In this 
+tutorial we'll learn how to create an `ST` object using the `spacetime` package. 
+We'll also learn how to feed that object into other functions for interpolation
+and vizualization.
+
+First, we recreate the S
