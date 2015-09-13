@@ -81,20 +81,21 @@ air &lt;- group_by(airdata, site, state, year, parameter, unit)
 air &lt;- summarise(air, mean = mean(value, na.rm = TRUE))
 air</code></pre>
 <pre><code>## Source: local data frame [65 x 6]
-## Groups: site, state, year, parameter
+## Groups: site, state, year, parameter [?]
 ## 
-##            site state year parameter unit       mean
-## 1  840170310001    17 2013     44201    7 0.02337084
-## 2  840170310001    17 2014     44201    7 0.02685007
-## 3  840170310032    17 2013     44201    7 0.03451101
-## 4  840170310032    17 2014     44201    7 0.03064563
-## 5  840170310064    17 2013     44201    7 0.02392692
-## 6  840170310076    17 2013     44201    7 0.02272494
-## 7  840170310076    17 2014     44201    7 0.02481797
-## 8  840170311003    17 2013     44201    7 0.02832126
-## 9  840170311003    17 2014     44201    7 0.02713999
-## 10 840170311601    17 2013     44201    7 0.02624174
-## ..          ...   ...  ...       ...  ...        ...</code></pre>
+##            site state  year parameter  unit       mean
+##           (chr) (chr) (chr)     (int) (int)      (dbl)
+## 1  840170310001    17  2013     44201     7 0.02337084
+## 2  840170310001    17  2014     44201     7 0.02685007
+## 3  840170310032    17  2013     44201     7 0.03451101
+## 4  840170310032    17  2014     44201     7 0.03064563
+## 5  840170310064    17  2013     44201     7 0.02392692
+## 6  840170310076    17  2013     44201     7 0.02272494
+## 7  840170310076    17  2014     44201     7 0.02481797
+## 8  840170311003    17  2013     44201     7 0.02832126
+## 9  840170311003    17  2014     44201     7 0.02713999
+## 10 840170311601    17  2013     44201     7 0.02624174
+## ..          ...   ...   ...       ...   ...        ...</code></pre>
 <pre class="r"><code>aqs_states &lt;- read.csv(&quot;https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv&quot;,
                        skip = 1, stringsAsFactors = FALSE)
 head(aqs_states)</code></pre>
@@ -127,27 +128,31 @@ names(b_states)[names(b_states) == &quot;State.Code&quot;] &lt;- &quot;state&quo
 head(as.tbl(b))</code></pre>
 <pre><code>## Source: local data frame [6 x 11]
 ## 
-##   state         site year parameter unit       mean State.Name State.Abbr
-## 1    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 2    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 3    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 4    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 5    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 6    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+##   state         site  year parameter  unit       mean State.Name
+##   (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
+## 1    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 2    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 3    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 4    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 5    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 6    17 840170310001  2013     44201     7 0.02337084   Illinois
+## Variables not shown: State.Abbr (chr), Region (int), County.Name (chr),
+##   County.Code (int)</code></pre>
 <p>If there are no common names, then we must use the <code>by.x</code> and <code>by.y</code> parameters.</p>
 <pre class="r"><code>b &lt;- merge(air, aqs_states, by.x = &quot;state&quot;, by.y = &quot;State.Code&quot;)
 head(as.tbl(b))</code></pre>
 <pre><code>## Source: local data frame [6 x 11]
 ## 
-##   state         site year parameter unit       mean State.Name State.Abbr
-## 1    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 2    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 3    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 4    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 5    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## 6    17 840170310001 2013     44201    7 0.02337084   Illinois         IL
-## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+##   state         site  year parameter  unit       mean State.Name
+##   (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
+## 1    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 2    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 3    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 4    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 5    17 840170310001  2013     44201     7 0.02337084   Illinois
+## 6    17 840170310001  2013     44201     7 0.02337084   Illinois
+## Variables not shown: State.Abbr (chr), Region (int), County.Name (chr),
+##   County.Code (int)</code></pre>
 <p>The default operation of <code>merge()</code> is an inner join. This means that, in column(s) in common between the two data frames, only records that match will be kept. In the example above, only states with the state codes in the <code>aqs_states</code> data frame that were also in the <code>state</code> column of the <code>air</code> data frame were kept.</p>
 <pre class="r"><code>unique(air$state)</code></pre>
 <pre><code>## [1] &quot;17&quot; &quot;18&quot; &quot;55&quot;</code></pre>
@@ -202,16 +207,18 @@ pollutants &lt;- read.table(header=T, text='
 <pre class="r"><code>b &lt;- inner_join(air, aqs_states, by = c(&quot;state&quot; = &quot;State.Code&quot;))
 head(b)</code></pre>
 <pre><code>## Source: local data frame [6 x 11]
-## Groups: site, state, year, parameter
+## Groups: site, state, year, parameter [1]
 ## 
-##           site state year parameter unit       mean State.Name State.Abbr
-## 1 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## 2 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## 3 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## 4 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## 5 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## 6 840170310001    17 2013     44201    7 0.02337084   Illinois         IL
-## Variables not shown: Region (int), County.Name (chr), County.Code (int)</code></pre>
+##           site state  year parameter  unit       mean State.Name
+##          (chr) (chr) (chr)     (int) (int)      (dbl)      (chr)
+## 1 840170310001    17  2013     44201     7 0.02337084   Illinois
+## 2 840170310001    17  2013     44201     7 0.02337084   Illinois
+## 3 840170310001    17  2013     44201     7 0.02337084   Illinois
+## 4 840170310001    17  2013     44201     7 0.02337084   Illinois
+## 5 840170310001    17  2013     44201     7 0.02337084   Illinois
+## 6 840170310001    17  2013     44201     7 0.02337084   Illinois
+## Variables not shown: State.Abbr (chr), Region (int), County.Name (chr),
+##   County.Code (int)</code></pre>
 <ul>
 <li><code>inner_join</code> Merge records that have shared values in the columns being merged on.</li>
 </ul>

@@ -117,23 +117,27 @@ chicago_sp</code></pre>
 ## 
 ## Known Subclasses: 
 ## Class &quot;SpatialPoints&quot;, directly
+## Class &quot;SpatialMultiPoints&quot;, directly
 ## Class &quot;SpatialGrid&quot;, directly
 ## Class &quot;SpatialLines&quot;, directly
 ## Class &quot;SpatialPolygons&quot;, directly
 ## Class &quot;SpatialPointsDataFrame&quot;, by class &quot;SpatialPoints&quot;, distance 2
 ## Class &quot;SpatialPixels&quot;, by class &quot;SpatialPoints&quot;, distance 2
+## Class &quot;SpatialMultiPointsDataFrame&quot;, by class &quot;SpatialMultiPoints&quot;, distance 2
 ## Class &quot;SpatialGridDataFrame&quot;, by class &quot;SpatialGrid&quot;, distance 2
 ## Class &quot;SpatialLinesDataFrame&quot;, by class &quot;SpatialLines&quot;, distance 2
 ## Class &quot;SpatialPixelsDataFrame&quot;, by class &quot;SpatialPoints&quot;, distance 3
 ## Class &quot;SpatialPolygonsDataFrame&quot;, by class &quot;SpatialPolygons&quot;, distance 2</code></pre>
 <p>A sub-class is a class whose objects contain all of the information in the parent class, plus additional information. For our purposed, the most useful direct sub-class of <code>Spatial</code> is <code>SpatialPoints</code>. Typically we will want to look at monitor locations (i.e. points), so we need to represent those as points in a <code>SpatialPoints</code> object. We’ll use the <code>airdata</code> dataset from the <code>region5air</code> package.</p>
 <pre class="r"><code>library(region5air)
-library(dplyr)
-data(airdata)
+library(dplyr)</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.2.2</code></pre>
+<pre class="r"><code>data(airdata)
 as.tbl(airdata)</code></pre>
 <pre><code>## Source: local data frame [367,595 x 20]
 ## 
 ##            site data_status action_code           datetime parameter
+##           (chr)       (int)       (int)              (chr)     (int)
 ## 1  840170890005           0          10 20141231T0100-0600     44201
 ## 2  840170311601           0          10 20141231T0100-0600     44201
 ## 3  840170314002           0          10 20141231T0100-0600     44201

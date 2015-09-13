@@ -90,8 +90,9 @@ head(b, 3)</code></pre>
 ## 2 840170311601 20141231T0100-0600     44201 0.021
 ## 3 840170314002 20141231T0100-0600     44201 0.018</code></pre>
 <p>With the <code>select()</code> function, you don’t need to put the columns in quotes.</p>
-<pre class="r"><code>library(dplyr)
-d &lt;- select(airdata, site, datetime, parameter, value)
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.2.2</code></pre>
+<pre class="r"><code>d &lt;- select(airdata, site, datetime, parameter, value)
 head(d, 3)</code></pre>
 <pre><code>##           site           datetime parameter value
 ## 1 840170890005 20141231T0100-0600     44201 0.022
@@ -155,9 +156,10 @@ head(daily_mean, 3)</code></pre>
 <pre class="r"><code>d_daily_mean &lt;- summarise(d_daily_mean, daily_mean = mean(value, na.rm = FALSE))
 head(d_daily_mean, 3)</code></pre>
 <pre><code>## Source: local data frame [3 x 4]
-## Groups: site, parameter
+## Groups: site, parameter [1]
 ## 
 ##           site parameter     date daily_mean
+##          (chr)     (int)    (chr)      (dbl)
 ## 1 840170310001     44201 20130403 0.03020000
 ## 2 840170310001     44201 20130404 0.02641667
 ## 3 840170310001     44201 20130405 0.03708333</code></pre>
