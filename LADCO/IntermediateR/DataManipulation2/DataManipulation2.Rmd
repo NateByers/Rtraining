@@ -1,5 +1,5 @@
 ---
-title: 'Data Manipulation: dplyr and tidyr'
+title: 'Data Manipulation Part 2: dplyr and tidyr'
 output: html_document
 ---
 

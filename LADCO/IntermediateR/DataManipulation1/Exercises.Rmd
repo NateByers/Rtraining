@@ -1,0 +1,112 @@
+---
+title: 'Data Manipulation Part 1: Exercises'
+output: html_document
+---
+
+## Exercises {#ex}
+
+These exercises accompany the [Data Manipulation 1](http://rpubs.com/NateByers/datamanip1) tutorial. 
+
+1. From `airdata`, use `select()` to create a `monitors` data frame with columns "site", "lat", "lon", and "GISDatum".
+
+[Solution](#ex1)
+
+2. From `airdata`, use `arrange()` to order `airdata` by site then by parameter then by date/time.
+
+[Solution](#ex2)
+
+3. From `airdata`, use `filter()` to create a data frame of PM~2.5~ measurements (AQS code 88101) from site 840180890022 with hourly values above 35 ug/m^3^.
+
+[Solution](#ex3)
+
+4. From `chicago_air`, create a data frame with readings between July 1 and July 31 where temperature
+values were at or above 90 degrees Fahrenheit.
+
+[Solution](#ex4)
+
+## Solutions
+
+### Solution 1{#ex1}
+```{r, message=FALSE, warning=FALSE}
+library(region5air)
+library(dplyr)
+
+data(airdata)
+monitors <- select(airdata, site, lat, lon, GISDatum)
+head(monitors)
+```
+Or equivalently,
+```{r}
+monitors <- select(airdata, site, lat:GISDatum)
+```
+
+This returns a very long data frame with many duplicate values. You can use the `distinct()` function
+from `dplyr` to remove the duplicated rows.
+
+```{r}
+dim(monitors)
+monitors <- distinct(monitors)
+dim(monitors)
+```
+
+[Back to exercises](#ex)
+
+### Solution 2 {#ex2}
+
+```{r}
+as.tbl(airdata)
+airdata <- arrange(airdata, site, parameter, datetime)
+as.tbl(airdata)
+```
+
+[Back to exercises](#ex)
+
+### Solution 3 {#ex3}
+
+If we look at the classes of the columns we can see that site is character but parameter and value are
+numeric. 
+
+```{r}
+as.tbl(airdata)
+```
+
+So we filter site using a string (i.e. put quotes around the numerals) instead of a number, 
+but for parameter and poc we use numeric values.
+
+```{r}
+my_pm <- filter(airdata, site == "840181270024", parameter == 88101, value > 35)
+as.tbl(my_pm)
+```
+
+[Back to exercises](#ex)
+
+### Solution 4 {#ex4}
+
+If we want to filter using date ranges, we need to make sure that date values are one of the
+date classes. In the `chicago_air` the date column is the character class, not a date class.
+
+```{r}
+data(chicago_air)
+as.tbl(chicago_air)
+```
+
+We can covert it to the Date class.
+
+```{r}
+chicago_air$date <- as.Date(chicago_air$date)
+```
+
+Now we can filter using dates.
+
+```{r}
+filter(chicago_air, date >= as.Date("2013-07-01"), date <= as.Date("2013-07-30"),
+       temp >= 90)
+```
+
+Or we can simply filter on the month of July,
+
+```{r}
+filter(chicago_air, month == 7, temp >= 90)
+```
+
+[Back to exercises](#ex)

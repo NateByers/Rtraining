@@ -5,6 +5,7 @@ Materials for R training.
 ## Intermediate R
 
 1. [Data Manipulation: dplyr](http://rpubs.com/NateByers/datamanip1)
+    + [Exercises](http://rpubs.com/NateByers/datamanip1exercises)
 2. [Data Manipluation: dplyr and tidyr](http://rpubs.com/NateByers/datamanip2)
 3. [Merging: base and dplyr](http://rpubs.com/NateByers/merging)
 4. [Functions and apply()](http://rpubs.com/NateByers/functionsApply)

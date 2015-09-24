@@ -1,5 +1,5 @@
 ---
-title: 'Data Manipulation: dplyr'
+title: 'Data Manipulation Part 1: dplyr'
 output: html_document
 ---
 
@@ -39,7 +39,7 @@ head(b, 3)
 
 With the `select()` function, you don't need to put the columns in quotes.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 d <- select(airdata, site, datetime, parameter, value)
 head(d, 3)
@@ -66,8 +66,8 @@ this is how we would do it in base R.
 airdata <- airdata[order(airdata$parameter, airdata$datetime), ]
 ```
 
-`arrange()` allows you to order a data frame by just adding the column names as parmeters. Use `desc()`
-to arrange in descending order.
+The `arrange()` function in `dplyr` allows you to order a data frame by just adding the column 
+names as parmeters. Use `desc()` to arrange in descending order.
 
 ```{r, eval=FALSE}
 airdata <- arrange(airdata, desc(parameter), datetime)
@@ -83,7 +83,8 @@ b <- airdata[airdata$parameter  == 62101 & airdata$poc == 1, ]
 dim(b)
 ```
 
-`filter()` takes logical expressions as parameters (commas are equivalent to `&`).
+The `filter()` function in `dplyr` takes logical expressions as parameters (commas are equivalent to
+`&`).
 
 ```{r}
 d <- filter(airdata, parameter == 62101, poc == 1)
@@ -92,7 +93,7 @@ dim(d)
 
 # summarise rows with group_by() and summarise() {#summarise}
 
-Suppose we want to summarise the value for each day in `airdata`. The first thing we need to do is create a date column, so we use another handy-Hadley package, `stringr`. The `str_split_fixed` function will split a character vector and return a fixed number of columns.
+Suppose we want to summarise the value for each day in `airdata`. The first thing we need to do is create a date column, so we use another handy-Hadley package called `stringr`. The `str_split_fixed` function will split a character vector and return a fixed number of columns.
 
 ```{r}
 library(stringr)
