@@ -83,6 +83,10 @@ img {
 <li>From <code>chicago_air</code>, create a data frame with readings between July 1 and July 31 where temperature values were at or above 90 degrees Fahrenheit.</li>
 </ol>
 <p><a href="#ex4">Solution</a></p>
+<ol start="5" style="list-style-type: decimal">
+<li>From <code>airdata</code>, find the daily maximum 1-hour value for all ozone monitors.</li>
+</ol>
+<p><a href="#ex5">Solution</a></p>
 </div>
 <div id="solutions" class="section level2">
 <h2>Solutions</h2>
@@ -236,6 +240,64 @@ as.tbl(chicago_air)</code></pre>
 <pre><code>##         date ozone temp solar month weekday
 ## 1 2013-07-18    NA   90  1.25     7       5
 ## 2 2013-07-19    NA   92  1.37     7       6</code></pre>
+<p><a href="#ex">Back to exercises</a></p>
+</div>
+<div id="ex5" class="section level3">
+<h3>Solution 5</h3>
+<p>First we filter down to ozone values and look at how many monitors there are and if there is more than one poc value for any monitor.</p>
+<pre class="r"><code>chicago_o3 &lt;- filter(airdata, parameter == 44201)
+table(select(chicago_o3, site, poc))</code></pre>
+<pre><code>##               poc
+## site               1     2
+##   840170310001 14331     0
+##   840170310032 10076     0
+##   840170310064  6869     0
+##   840170310076 16753     0
+##   840170311003     0  9336
+##   840170311601 16905     0
+##   840170313103     0 14418
+##   840170314002 14764     0
+##   840170314007 12245     0
+##   840170314201 15883     0
+##   840170317002 12213     0
+##   840170436001 11321     0
+##   840170890005 16368     0
+##   840170971007 16868     0
+##   840171110001 17317     0
+##   840171971011 16513     0
+##   840180890022  8449     0
+##   840180890030  8646     0
+##   840180892008  8441     0
+##   840181270024  8445     0
+##   840181270026  8654     0
+##   840550590019 10651     0
+##   840550590025  9199     0</code></pre>
+<p>So there are 23 sites and only one poc value per site, so we don’t have to worry about more than one value per site/hour. We can simply group by site and date.</p>
+<pre class="r"><code># first make date column
+chicago_o3$date &lt;- substr(chicago_o3$datetime, 1, 8)
+chicago_o3 &lt;- group_by(chicago_o3, site, date)</code></pre>
+<p>If we did have sites that had more than one poc per site/hour, we could filter on the poc by grouping on the hour. We could do this for the whole <code>airdata</code> dataset this way:</p>
+<pre class="r"><code>lowest_poc &lt;- group_by(airdata, site, datetime, parameter)
+lowest_poc &lt;- filter(lowest_poc, poc == min(poc))</code></pre>
+<p>Now we can summarize the <code>chicago_o3</code> data frame by finding the maximum 1-hour value for each day.</p>
+<pre class="r"><code>chicago_o3 &lt;- summarize(chicago_o3, o3_1hr_max = max(value, na.rm = TRUE))
+as.tbl(chicago_o3)</code></pre>
+<pre><code>## Source: local data frame [12,048 x 3]
+## Groups: site [?]
+## 
+##            site     date o3_1hr_max
+##           (chr)    (chr)      (dbl)
+## 1  840170310001 20130403      0.046
+## 2  840170310001 20130404      0.053
+## 3  840170310001 20130405      0.044
+## 4  840170310001 20130406      0.054
+## 5  840170310001 20130407      0.041
+## 6  840170310001 20130408      0.045
+## 7  840170310001 20130409      0.020
+## 8  840170310001 20130410      0.027
+## 9  840170310001 20130411      0.029
+## 10 840170310001 20130412      0.027
+## ..          ...      ...        ...</code></pre>
 <p><a href="#ex">Back to exercises</a></p>
 </div>
 </div>

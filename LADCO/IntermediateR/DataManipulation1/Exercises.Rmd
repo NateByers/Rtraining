@@ -24,6 +24,10 @@ values were at or above 90 degrees Fahrenheit.
 
 [Solution](#ex4)
 
+5. From `airdata`, find the daily maximum 1-hour value for all ozone monitors.
+
+[Solution](#ex5)
+
 ## Solutions
 
 ### Solution 1{#ex1}
@@ -107,6 +111,43 @@ Or we can simply filter on the month of July,
 
 ```{r}
 filter(chicago_air, month == 7, temp >= 90)
+```
+
+[Back to exercises](#ex)
+
+### Solution 5 {#ex5}
+
+First we filter down to ozone values and look at how many monitors there are and if there
+is more than one poc value for any monitor.
+
+```{r}
+chicago_o3 <- filter(airdata, parameter == 44201)
+table(select(chicago_o3, site, poc))
+```
+
+So there are 23 sites and only one poc value per site, so we don't have to worry about more than one
+value per site/hour. We can simply group by site and date.
+
+```{r}
+# first make date column
+chicago_o3$date <- substr(chicago_o3$datetime, 1, 8)
+chicago_o3 <- group_by(chicago_o3, site, date)
+```
+
+If we did have sites that had more than one poc per site/hour, we could filter on the poc by grouping
+on the hour. We could do this for the whole `airdata` dataset this way:
+
+```{r, eval=FALSE}
+lowest_poc <- group_by(airdata, site, datetime, parameter)
+lowest_poc <- filter(lowest_poc, poc == min(poc))
+```
+
+Now we can summarize the `chicago_o3` data frame by finding the maximum 1-hour value for
+each day.
+
+```{r}
+chicago_o3 <- summarize(chicago_o3, o3_1hr_max = max(value, na.rm = TRUE))
+as.tbl(chicago_o3)
 ```
 
 [Back to exercises](#ex)

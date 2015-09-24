@@ -12,10 +12,10 @@ This tutorial will cover the following functions from `dplyr` and `tidyr`:
 
 # Window functions with mutate() transmute(){#mutate}
 
-In the first Data Manipulation tutorial we learned how to use the `group_by()` and
-`summarise()` functions to aggregate data. Those functions are useful in situations
-where you need to summarise data based on other columns, such as daily summaries 
-for each site and pollutant in a data set. 
+In the first [Data Manipulation](http://rpubs.com/NateByers/datamanip2) tutorial we 
+learned how to use the `group_by()` and `summarise()` functions to aggregate data. 
+Those functions are useful in situations where you need to summarise data based on 
+other columns, such as daily summaries for each site and pollutant in a data set. 
 
 But in some cases we may want a new value for each record in a data frame. For example, 
 in the `chicago_air` data set from the `region5air` package, we may want a column 

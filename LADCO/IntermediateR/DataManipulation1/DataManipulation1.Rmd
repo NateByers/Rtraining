@@ -93,18 +93,20 @@ dim(d)
 
 # summarise rows with group_by() and summarise() {#summarise}
 
-Suppose we want to summarise the value for each day in `airdata`. The first thing we need to do is create a date column, so we use another handy-Hadley package called `stringr`. The `str_split_fixed` function will split a character vector and return a fixed number of columns.
+Suppose we want to summarise the value for each day in `airdata`. We can use the `substr()`
+function to grab the first 8 characters of the "datetime" column. The `start` and `stop`
+parameters are used to indicate which character is the starting position and which
+is the stopping position.
 
 ```{r}
-library(stringr)
-date_time <- str_split_fixed(airdata$datetime, pattern = "T", n = 2)
-head(date_time, 3)
+# for example
+substr("20150101 00:00:00", start = 1, stop = 8)
 ```
 
-The first column is the date, so we'll add that to `airdata`.
+We'll add a "date" column to `airdata`.
 
 ```{r}
-airdata$date <- date_time[, 1]
+airdata$date <- substr(airdata$datetime, 1, 8)
 ```
 
 In base R, we can summarise the mean of each day by using the `tapply()` function (see `?tapply()`). Let's find the daily mean for a given site and a given parameter.
@@ -115,10 +117,10 @@ daily_mean <- tapply(ozone_site_A$value, ozone_site_A$date, mean, na.rm = TRUE)
 head(daily_mean, 3)
 ```
 
-To use `tapply()` you work with vectors. You supply the vector you want to apply the `mean()` function to (`ozone_site_A$value`), and you supply the vector that will be a factor for aggregation (`ozone_site_A$date`). 
+To use `tapply()` you work with vectors. You have to supply the vector you want to apply the `mean()` function to (`ozone_site_A$value`), and you supply the vector that will be a factor for aggregation (`ozone_site_A$date`). 
 
-`dplyr` accomplishes this task by allowing you to use data frames and their column names. The first step is to use the `group_by()` function to pick the columns that will be factors (groups will be created by the 
-levels of these columns).
+`dplyr` accomplishes this task by allowing you to use data frames and their column names. The first step is to use the `group_by()` function to pick the columns that will be factors (groups will be created by
+the levels of these columns).
 
 ```{r}
 d_daily_mean <- group_by(airdata, site, parameter, date)
@@ -132,10 +134,10 @@ d_daily_mean <- summarise(d_daily_mean, daily_mean = mean(value, na.rm = FALSE))
 head(d_daily_mean, 3)
 ```
 
-The resulting [data frame](#classes) has just three columns: site, parameter, date, and daily_mean. Instead
-of subsetting down to one site and one parameter before calculating the daily mean, `summarise()` will take
-all of the grouping information from the `group_by` function and calculate all of the daily values for
-each site and parameter.
+The resulting [data frame](#classes) has just three columns: site, parameter, date, and daily_mean.
+Instead of limitting yourself to just one site and one parameter before calculating the daily mean,
+`summarise()` allows you to take all of the grouping information from the `group_by` function and
+calculate all of the daily values for each site and parameter.
 
 ```{r}
 table(d_daily_mean[, c("site", "parameter")])
