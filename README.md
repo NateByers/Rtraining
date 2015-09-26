@@ -11,6 +11,7 @@ Materials for R training.
 3. [Merging: base and dplyr](http://rpubs.com/NateByers/merging)
     + [Exercises](http://rpubs.com/NateByers/mergingexercises)
 4. [Functions and apply()](http://rpubs.com/NateByers/functionsApply)
+    + [Exercises](http://rpubs.com/NateByers/functionsExercises)
 5. [Plotting with openair](http://rpubs.com/NateByers/openair)
 6. [Spatial Data Objects](http://rpubs.com/NateByers/spatialobjects)
 7. Space-Time Data Objects

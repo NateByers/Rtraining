@@ -4,18 +4,18 @@ output: html_document
 ---
 
 - [Writing functions](#functions)
-- [For and while loops](#loops)
+- [For loop](#loops)
 - [apply() and related functions](#apply)
 
 If we can do _anything_ in R, then we already know how to use functions. This tutorial
-will cover how to create our own functions. We'll also review a some looping functions,
+will cover how to create our own functions. We'll also review some looping functions,
 including the infamous `apply()` family of functions.
 
 
 # Writing functions {#functions}
 
 We already know that when we use a function, we need to know what the arguments are.
-For example, if we want to use the `mean()` functions, we look at the documentation
+For example, if we want to use the `mean()` function, we look at the documentation
 by typing `?mean()`.
 
 The first function we write will be our own version of a funciton that calculates
@@ -31,7 +31,7 @@ myMean <- function( ){
 ```
 
 A function is created by using another function called... `function()`. The parentheses will
-contain the parameters want our function to have, and the curly braces will contain the 
+contain the parameters we want our function to have, and the curly braces will contain the 
 operation that will be performed on the parameters. First, we'll need a vector of numbers,
 so we'll call it the `x` parameter.
 
@@ -52,7 +52,7 @@ average_of_values
 }
 ```
 
-So we've found how many numbers are in the `x` vector, we've added up all the values
+We've found how many numbers are in the `x` vector, we've added up all the values
 in that vector, and we've found the average. In a function, the last line will always 
 be returned. You can also use the `return()` function, but it's not necessary.
 
@@ -73,16 +73,7 @@ vector_mean <- myMean(x = my_vector)
 vector_mean
 ```
 
-When we write a function, it's usually not as straight forward as this example. In fact, 
-you may notice that there could be problems using our function. What's to stop us from
-trying to use a character vector, or a data frame, as `x`?
-
-```{r, error=TRUE}
-my_vector <- c("a", "b", "c")
-myMean(my_vector)
-```
-
-# For and while loops {#loops}
+# For loop {#loops}
 
 Like most programming languges, R has for and while loops. We'll just review for loops
 and move on to `apply()` functions, which are more commonly used in R.
@@ -156,9 +147,13 @@ arguments can be used to pass on to the function being applied to each row or co
 
 ```{r}
 air <- chicago_air[, c("ozone", "temp", "solar")]
-# MARGIN = 2 means we are applying the max() function to each column
-# na.rm is being passed to the max() function
-air_max <- apply(air, MARGIN = 2, FUN = max, na.rm = TRUE)
+
+
+air_max <- apply(air, 
+                 MARGIN = 2, # we are applying the max() function to each column
+                 FUN = max, 
+                 na.rm = TRUE# na.rm is being passed to the max() function
+                 )
 air_max
 ```
 
