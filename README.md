@@ -7,6 +7,7 @@ Materials for R training.
 1. [Data Manipulation: dplyr](http://rpubs.com/NateByers/datamanip1)
     + [Exercises](http://rpubs.com/NateByers/datamanip1exercises)
 2. [Data Manipluation: dplyr and tidyr](http://rpubs.com/NateByers/datamanip2)
+    + [Exercises](http://rpubs.com/NateByers/datamanip2exercises)
 3. [Merging: base and dplyr](http://rpubs.com/NateByers/merging)
 4. [Functions and apply()](http://rpubs.com/NateByers/functionsApply)
 5. [Plotting with openair](http://rpubs.com/NateByers/openair)

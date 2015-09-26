@@ -3,7 +3,7 @@ title: "Merging"
 output: html_document
 ---
 
-This turial will cover how to merge data frames using the base R and `dplyr`. 
+This turial will cover how to merge data frames using base R and `dplyr`. 
 
 - [Base R `merge()`](#base)
 - [Merging with `dplyr`](#dplyr)
@@ -35,23 +35,12 @@ aqs_states <- read.csv("states.csv", stringsAsFactors = FALSE)
 head(aqs_states)
 ```
 
-```{r, eval=FALSE}
-aqs_units <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/Units.csv",
-                      skip = 1, stringsAsFactors = FALSE)
-head(aqs_units)
-```
-
-```{r, echo=FALSE}
-aqs_units <- read.csv("units.csv", stringsAsFactors = FALSE)
-head(aqs_units)
-```
-
 # Merging in base R {#base}
 
 Merging two data frames can be accomplished in base R using the `merge()` function. 
 To merge, there must be one or more columns that the two tables have in common. If we 
 wanted to merge the `air` dataset and the `aqs_states` table, we can see that the common
-column is `state` and `State.Code` respectively.
+columns are "state" and "State.Code" respectively.
 
 The first two arguments of the `merge()` function are the two data frames to be merged. 
 If there are column names that are the same in the two data frames, then the default 
@@ -79,10 +68,10 @@ b <- merge(air, aqs_states, by.x = "state", by.y = "State.Code")
 head(as.tbl(b))
 ```
 
-The default operation of `merge()` is an inner join. This means that, in column(s) in 
-common between the two data frames, only records that match will be kept. In the example
+The default operation of `merge()` is an inner join. This means that, in column(s) that
+are shared among the two data frames, only records that match will be kept. In the example
 above, only states with the state codes in the `aqs_states` data frame that were also in
-the `state` column of the `air` data frame were kept.
+the "state" column of the `air` data frame were kept.
 
 ```{r}
 unique(air$state)

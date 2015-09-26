@@ -21,7 +21,7 @@ But in some cases we may want a new value for each record in a data frame. For e
 in the `chicago_air` data set from the `region5air` package, we may want a column 
 that is a one day lag value of the ozone column.
 
-```{r, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(region5air)
 library(dplyr)
 data(chicago_air)
@@ -65,7 +65,7 @@ and wish that we could have one column with all the values and one column with a
 spread out as columns. Since we want to gather those column names into one column, we use
 the `gather()` function in the `tidyr` package.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(tidyr)
 d <- gather(chicago_air, key = parameter, value = daily_value, ozone:solar)
 head(d, 3)
@@ -76,7 +76,7 @@ The first paramter of in the `gather()` function is the data frame, the second p
 is the name that you want the factor to have (in our case, we're calling it `parameter`), 
 the third parameter is the name of the column where you will be placing the original
 values under each parameter (we specified that these are daily values for each record), 
-and the third column specifies which columns will be gathered.
+and the fourth parameter specifies which columns will be gathered.
 
 One reason to reshape data in this way is to make it easier to feed into a plotting
 function such as `ggplot()`.

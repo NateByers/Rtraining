@@ -1,0 +1,71 @@
+---
+title: 'Data Manipulation Part 2: Exercises'
+output: html_document
+---
+
+## Exercises {#ex}
+
+These exercises accompany the [Mergig](http://rpubs.com/NateByers/merging) tutorial. 
+
+1. Use the `merge()` function to merge `airdata` with the AQS units table found at 
+https://aqs.epa.gov/aqsweb/codes/data/Units.csv.
+
+[Solution](#ex1)
+
+2. Do the same merge described in Exercise 1 but use the `dplyr` function `inner_join()`.
+
+[Solution](#ex2)
+
+3. 
+
+[Solution](#ex3)
+
+4. 
+
+[Solution](#ex4)
+
+## Solutions
+
+### Solution 1{#ex1}
+
+```{r, warning=FALSE, message=FALSE}
+library(region5air)
+library(dplyr)
+data(airdata)
+as.tbl(airdata)
+```
+
+```{r, eval=FALSE}
+aqs_units <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/Units.csv",
+                      skip = 1, stringsAsFactors = FALSE)
+head(aqs_units)
+```
+
+```{r, echo=FALSE}
+aqs_units <- read.csv("units.csv", stringsAsFactors = FALSE)
+head(aqs_units)
+```
+
+```{r}
+air <- merge(airdata, aqs_units, by.x = "unit", by.y = "Unit")
+as.tbl(air)
+```
+
+[Back to exercises](#ex)
+
+### Solution 2 {#ex2}
+
+```{r, message=FALSE, warning=FALSE}
+air <- inner_join(airdata, aqs_units, by = c("unit" = "Unit"))
+as.tbl(air)
+```
+
+[Back to exercises](#ex)
+
+### Solution 3 {#ex3}
+
+[Back to exercises](#ex)
+
+### Solution 4 {#ex4}
+
+[Back to exercises](#ex)

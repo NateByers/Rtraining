@@ -125,7 +125,7 @@ chicago_o3 <- filter(airdata, parameter == 44201)
 table(select(chicago_o3, site, poc))
 ```
 
-So there are 23 sites and only one poc value per site, so we don't have to worry about more than one
+There are 23 sites and only one poc value per site, so we don't have to worry about more than one
 value per site/hour. We can simply group by site and date.
 
 ```{r}
