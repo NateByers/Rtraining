@@ -70,11 +70,11 @@ getClass("Spatial")
 ```
 
 A sub-class is a class whose objects contain all of the information in the parent class,
-plus additional information. For our purposed, the most useful direct sub-class of `Spatial`
+plus additional information. For our purposes, the most useful direct sub-class of `Spatial`
 is `SpatialPoints`. Typically we will want to look at monitor locations (i.e. points), 
 so we need to represent those as points in a `SpatialPoints` object. We'll use the `airdata` dataset from the `region5air` package.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(region5air)
 library(dplyr)
 data(airdata)
