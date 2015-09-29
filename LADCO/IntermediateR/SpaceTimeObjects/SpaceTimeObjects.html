@@ -73,7 +73,7 @@ img {
 <div id="ST" class="section level1">
 <h1><code>ST*</code> objects</h1>
 <p>In the tutorial on the <code>sp</code> package we learned how to create a very simple <code>Spatial</code> object, and then learned how to build on that object to create a <code>SpatialPoints</code> object and a <code>SpatialPointsDataFrame</code>. And there are many other <code>Spatial*</code> objects you can create, such as <code>SpatialLines</code> and <code>SpatialGrid</code>.</p>
-<p>The <code>spacetime</code> package also has a fundamental object that is the basis for more complicated objects. The <code>ST</code> object simply contains information about the spatial nature of the object (such as the information contained in a <code>SpatialPoints</code> object) and information about the time frame for the object. The object is created using the <code>ST()</code> function. Below is a simple object representing two points in space over two time intervals.</p>
+<p>The <code>spacetime</code> package also has a fundamental object that is the basis for more complicated objects. The <code>ST</code> object simply contains information about the spatial nature of the object (basically the same information contained in a <code>SpatialPoints</code> object) and information about the time frame for the object. The object is created using the <code>ST()</code> function. Below is a simple object representing two points in space over two time intervals.</p>
 <pre class="r"><code>library(sp)
 library(spacetime)
 dates &lt;- as.Date('2008-01-01')+1:2
@@ -162,6 +162,69 @@ air</code></pre>
 ## 11 840170314002 2013-06-01 14:00:00 0.045 -87.75247 41.85524    WGS84
 ## 12 840170311601 2013-06-01 14:00:00 0.042 -87.99057 41.66812    WGS84</code></pre>
 <p>Now we make an <code>STFDF</code> object using the <code>stConstruct()</code> function.</p>
+<pre class="r"><code># the class for air must be data.frame
+air &lt;- as.data.frame(air)
+airSTFDF &lt;- stConstruct(air, c(&quot;lon&quot;, &quot;lat&quot;), &quot;datetime&quot;,
+                       crs = CRS(&quot;+proj=longlat +ellpsWGS84&quot;))
+airSTFDF</code></pre>
+<pre><code>## An object of class &quot;STIDF&quot;
+## Slot &quot;data&quot;:
+##            site value GISDatum
+## 7  840170890005 0.047    WGS84
+## 8  840170314002 0.051    WGS84
+## 9  840170311601 0.044    WGS84
+## 1  840170890005 0.044    WGS84
+## 2  840170314002 0.049    WGS84
+## 3  840170311601 0.044    WGS84
+## 4  840170890005 0.044    WGS84
+## 5  840170314002 0.045    WGS84
+## 6  840170311601 0.042    WGS84
+## 10 840170890005 0.043    WGS84
+## 11 840170314002 0.045    WGS84
+## 12 840170311601 0.042    WGS84
+## 
+## Slot &quot;sp&quot;:
+## SpatialPoints:
+##             lon      lat
+##  [1,] -88.27303 42.04915
+##  [2,] -87.75247 41.85524
+##  [3,] -87.99057 41.66812
+##  [4,] -88.27303 42.04915
+##  [5,] -87.75247 41.85524
+##  [6,] -87.99057 41.66812
+##  [7,] -88.27303 42.04915
+##  [8,] -87.75247 41.85524
+##  [9,] -87.99057 41.66812
+## [10,] -88.27303 42.04915
+## [11,] -87.75247 41.85524
+## [12,] -87.99057 41.66812
+## Coordinate Reference System (CRS) arguments: +proj=longlat
+## +ellps=WGS84 
+## 
+## Slot &quot;time&quot;:</code></pre>
+<pre><code>## Warning: timezone of object (US/Central) is different than current timezone
+## ().</code></pre>
+<pre><code>##                     timeIndex
+## 2013-06-01 11:00:00         7
+## 2013-06-01 11:00:00         8
+## 2013-06-01 11:00:00         9
+## 2013-06-01 12:00:00         1
+## 2013-06-01 12:00:00         2
+## 2013-06-01 12:00:00         3
+## 2013-06-01 13:00:00         4
+## 2013-06-01 13:00:00         5
+## 2013-06-01 13:00:00         6
+## 2013-06-01 14:00:00        10
+## 2013-06-01 14:00:00        11
+## 2013-06-01 14:00:00        12
+## 
+## Slot &quot;endTime&quot;:
+##  [1] &quot;2013-06-01 11:00:00 CDT&quot; &quot;2013-06-01 11:00:00 CDT&quot;
+##  [3] &quot;2013-06-01 11:00:00 CDT&quot; &quot;2013-06-01 12:00:00 CDT&quot;
+##  [5] &quot;2013-06-01 12:00:00 CDT&quot; &quot;2013-06-01 12:00:00 CDT&quot;
+##  [7] &quot;2013-06-01 13:00:00 CDT&quot; &quot;2013-06-01 13:00:00 CDT&quot;
+##  [9] &quot;2013-06-01 13:00:00 CDT&quot; &quot;2013-06-01 14:00:00 CDT&quot;
+## [11] &quot;2013-06-01 14:00:00 CDT&quot; &quot;2013-06-01 14:00:00 CDT&quot;</code></pre>
 </div>
 
 

@@ -80,6 +80,14 @@ air
 Now we make an `STFDF` object using the `stConstruct()` function.
 
 ```{r}
-airSTFDF <- stConstruct(air, c("lon", "lat"), "datetime",
-                       crs = unique(air$GISDatum))
+# the class for air must be data.frame
+air <- as.data.frame(air)
+airSTFDF <- stConstruct(air, space = c("lon", "lat"),
+                        time = "datetime",
+                        crs = CRS("+proj=longlat +ellpsWGS84"))
+airSTFDF
 ```
+
+If you don't supply anything for the argument `endTime` in 
+`stConstruct()` then it's assumed that the these are time
+instances and not durations.
