@@ -19,3 +19,4 @@ Materials for R training.
 7. [Maps](http://rpubs.com/NateByers/maps)
     + [Exercises](http://rpubs.com/NateByers/mapsExercises)
 8. [Shiny](https://natebyers.shinyapps.io/IntroToShiny)
+    + [Exercises](https://natebyers.shinyapps.io/ShinyExercises)

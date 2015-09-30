@@ -1,5 +1,6 @@
-library(ggplot2)
+library(dygraphs)
 library(leaflet)
+library(xts)
 chicago_air <- read.csv(text = '
                         "date","ozone","temp","solar","month","weekday"
                         "2013-01-01",0.032,17,0.65,1,3
@@ -368,13 +369,15 @@ chicago_air <- read.csv(text = '
                         "2013-12-30",0.024,NA,0.44,12,2
                         "2013-12-31",0.021,NA,0.49,12,3
                         ', stringsAsFactors = FALSE)
-chicago_air$date <- as.Date(chicago_air$date)
+#chicago_air$date <- as.Date(chicago_air$date)
+chicago_dy <- chicago_air[, c("ozone", "temp", "solar")]
+rownames(chicago_dy) <- chicago_air[, "date"]
 
 # Define server logic required to plot the time series
 shinyServer(function(input, output) {
   
-  output$timePlot <- renderPlot({
-    ggplot(chicago_air, aes_string("date", input$parameter)) + geom_line() 
+  output$dygraph <- renderDygraph({
+    dygraph(chicago_dy[, input$parameter])
   })
   
   output$dataTable <- renderDataTable({

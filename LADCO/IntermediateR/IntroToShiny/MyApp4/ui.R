@@ -1,5 +1,6 @@
 library(shiny)
 library(leaflet)
+library(dygraphs)
 
 # Define UI for application that plots time series
 shinyUI(fluidPage(
@@ -20,7 +21,7 @@ shinyUI(fluidPage(
     
     # Show a plot of the time series
     mainPanel(
-      plotOutput("timePlot"),
+      dygraphOutput("dygraph"),
       dataTableOutput("dataTable")
     )
   )
