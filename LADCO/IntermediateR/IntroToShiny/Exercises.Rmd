@@ -1,12 +1,12 @@
 ---
-title: 'Intro To Shiny: Tutorial'
+title: 'Intro To Shiny'
 runtime: shiny
 output: html_document
 ---
 
 ## Exercises {#ex}
 
-These exercises accompany the [Intro to Shiny](http://rpubs.com/NateByers/IntroToShiny) tutorial. 
+These exercises accompany the [Intro to Shiny](https://natebyers.shinyapps.io/IntroToShiny) tutorial. 
 
 1. If you have not already, create a folder called `ChicagoApp` in your
 working directory and place the `ui.R` and `server.R` scripts from the 
