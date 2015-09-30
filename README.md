@@ -16,5 +16,6 @@ Materials for R training.
     + [Exercises](http://rpubs.com/NateByers/openairExercises)
 6. [Spatial Data Objects](http://rpubs.com/NateByers/spatialobjects)
     + [Exercises](http://rpubs.com/NateByers/spatialobjectsExercises)
-7. Space-Time Data Objects
+7. [Maps](http://rpubs.com/NateByers/maps)
+    + [Exercises](http://rpubs.com/NateByers/mapsExercises)
 8. [Shiny](https://natebyers.shinyapps.io/IntroToShiny)

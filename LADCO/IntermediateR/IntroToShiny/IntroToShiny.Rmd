@@ -134,33 +134,23 @@ shinyUI(fluidPage(
 ```{r, eval=FALSE}
 
 library(shiny)
+library(region5air)
+data(chicago_air)
+chicago_air$date <- as.Date(chicago_air$date)
 
-# Define server logic required to draw a histogram
+  # Define server logic required to plot the time series
 shinyServer(function(input, output) {
-
-  # Expression that generates a histogram. The expression is
-  # wrapped in a call to renderPlot to indicate that:
-  #
-  #  1) It is "reactive" and therefore should be automatically
-  #     re-executed when inputs change
-  #  2) Its output type is a plot
-
-  output$distPlot <- renderPlot({
-    x    <- faithful[, 2]  # Old Faithful Geyser data
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
+  
+  output$timePlot <- renderPlot({
+    ggplot(chicago_air, aes_string("date", input$parameter)) + geom_line() 
   })
-
 })
 ```
 
-If we have the `ui.R` and `server.R` scripts in a folder called `MyApp` in our working directory,
-then we would run the app with
+If we have the `ui.R` and `server.R` scripts in a folder called `ChicagoApp` in our working directory, then we would run the app with
 
 ```{r, eval=FALSE}
-runApp("MyApp")
+runApp("ChicagoApp")
 ```
 
 ```{r, echo=FALSE}
