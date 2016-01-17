@@ -5,7 +5,8 @@ output: html_document
 
 ## Exercises {#ex}
 
-These exercises accompany the [Writing Functions](http://rpubs.com/NateByers/functionsApply) tutorial. 
+These exercises accompany the 
+<a href="http://rpubs.com/NateByers/functions" target="_blank">Functions</a> tutorial. 
 
 1. Write a function that checks if a value is above a threshold value.
 The function should have two parameters: `x` which is the numeric value
@@ -116,7 +117,7 @@ my_thresholds <- data.frame(parameter = c("ozone", "temp", "solar"),
 my_thresholds
 ```
 
-Now we write a function that will take the two values in each row
+Next we write a function that will take the two values in each row
 and find the sum of days above the threshold for that parameter.
 
 ```{r}

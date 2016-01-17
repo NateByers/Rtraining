@@ -4,8 +4,10 @@ output: html_document
 ---
 
 The `openair` package is specifically designed to plot air pollution monitoring
-data. This tutorial will give a bried introduction to many of the plotting functions
-in `openair`.
+data. This tutorial will give a brief introduction to many of the plotting functions
+in `openair`. Visit the <a href="http://www.openair-project.org/" target="_blank">
+project website</a> for more information, including
+a comprehensive <a href="http://www.openair-project.org/Downloads/OpenAirManual.aspx" target="_blank">manual</a>.
 
 - [summaryPlot](#summary)
 - [windRose](#windrose)
@@ -19,12 +21,30 @@ The first plotting function we'll look at is `summaryPlot()`. Functions in the
 `openair` package expect data frames that are in a certain format. The column with 
 time information must be labeled `date` (lowercase) and be a `POSIX` class.
 
+We'll be using the `chicago_air` data frame, which already has a date column.
+
 ```{r, message=FALSE, warning=FALSE}
 library(region5air)
 data(chicago_air)
 head(chicago_air, 3)
-chicago_air$date <- as.POSIXct(chicago_air$date, format = "%Y-%m-%d")
+```
 
+However, the class of that date column is `character`.
+
+```{r}
+class(chicago_air$date)
+```
+
+We need to change it using the `as.POSIXct()` function.
+
+```{r}
+chicago_air$date <- as.POSIXct(chicago_air$date, format = "%Y-%m-%d")
+```
+
+Now we just feed the first four columns of the data frame to the `summaryPlot()`
+function.
+
+```{r, warning=FALSE, message=FALSE}
 library(openair)
 summaryPlot(chicago_air[, 1:4])
 ```
@@ -103,3 +123,8 @@ calendarPlot(chicago_air, pollutant = "ozone")
 
 calendarPlot(chicago_wind, pollutant = "ozone", annotate = "ws")
 ```
+
+# Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/openairexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
+material.

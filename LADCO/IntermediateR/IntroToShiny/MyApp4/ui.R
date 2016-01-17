@@ -11,12 +11,12 @@ shinyUI(fluidPage(
   # Sidebar with a dropdown for selecting parameter
   sidebarLayout(
     sidebarPanel(
+      leafletOutput("mymap"),
       selectInput("parameter",
                   "Select Parameter:",
                   c("Ozone" = "ozone",
-                  "Temperature" = "temp",
-                  "Solar Radiation" = "solar")),
-      leafletOutput("mymap")
+                    "Temperature" = "temp",
+                    "Solar Radiation" = "solar"))
     ),
     
     # Show a plot of the time series

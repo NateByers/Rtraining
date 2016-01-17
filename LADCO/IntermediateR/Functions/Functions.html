@@ -73,12 +73,12 @@ img {
 <div id="functions" class="section level1">
 <h1>Writing functions</h1>
 <p>We already know that when we use a function, we need to know what the arguments are. For example, if we want to use the <code>mean()</code> function, we look at the documentation by typing <code>?mean()</code>.</p>
-<p>The first function we write will be our own version of a funciton that calculates the mean of a numeric vector. Since we can’t just call it <code>mean</code> (or, if we do, we will replace that base function in our environment), we will call our function <code>myMean</code>.</p>
+<p>The first function we write will be our own version of a function that calculates the mean of a numeric vector. Since we can’t just call it <code>mean</code> (or, if we do, we will replace that base function in our environment), we will call our function <code>myMean</code>.</p>
 <p>Here is the basic structure of creating a function.</p>
 <pre class="r"><code>myMean &lt;- function( ){
   
 }</code></pre>
-<p>A function is created by using another function called… <code>function()</code>. The parentheses will contain the parameters we want our function to have, and the curly braces will contain the operation that will be performed on the parameters. First, we’ll need a vector of numbers, so we’ll call it the <code>x</code> parameter.</p>
+<p>A function is created by using another function called <code>function()</code>. The parentheses will contain the parameters we want our function to have, and the curly braces will contain the operation that will be performed on the parameters. First, we’ll need a vector of numbers, so we’ll call it the <code>x</code> parameter.</p>
 <pre class="r"><code>myMean &lt;- function(x){
   #do something to x
 }</code></pre>
@@ -192,6 +192,10 @@ air_max</code></pre>
 <pre class="r"><code>tapply(chicago_air$ozone, list(chicago_air$month), max, na.rm = TRUE)</code></pre>
 <pre><code>##     1     2     3     4     5     6     7     8     9    10    11    12 
 ## 0.034 0.041 0.052 0.062 0.081 0.074 0.043 0.066 0.078 0.057 0.030 0.030</code></pre>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<p>Go to the <a href="http://rpubs.com/NateByers/functionsexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.</p>
 </div>
 
 

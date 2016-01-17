@@ -13,7 +13,8 @@ This tutorial will cover the following functions in the `dplyr` package:
 - [filter()](#filter), filtering rows
 - [summarise()](#summarise), summarizing rows
 
-We will be using the `airdata` dataset from the `region5air` package.
+We will be using the `airdata` dataset from the `region5air` package
+<a href="https://github.com/NateByers/region5air" target="_blank">on GitHub</a>.
 
 ```{r}
 library(region5air)
@@ -26,7 +27,7 @@ how the dplyr function accomplishes the same task.
 # Select columns with select() {#select}
 
 If we wanted to select a few columns from `airdata`, we would need to either use numbers or 
-names. Suppose we just wanted the site, time, parameter, and value:
+names. Suppose we just wanted the site, time, parameter, and value columns:
 
 ```{r}
 b <- airdata[, c("site", "datetime", "parameter", "value")]
@@ -53,21 +54,22 @@ a colon.
 b <- airdata[, c(1, 4:8)]
 head(b, 3)
 
+# using dplyr
 d <- select(airdata, site, datetime:value)
 head(d, 3)
 ```
 
 # Arrange rows with arrange() {#arrange}
 
-If we wanted to arrange `airdata` by first ordering by parameter then odering chronologically,
-this is how we would do it in base R.
+If we wanted to arrange`airdata` by first ordering the rows by parameter and then
+odering the rows chronologically, this is how we would do it in base R.
 
 ```{r, eval=FALSE}
 airdata <- airdata[order(airdata$parameter, airdata$datetime), ]
 ```
 
-The `arrange()` function in `dplyr` allows you to order a data frame by just adding the column 
-names as parmeters. Use `desc()` to arrange in descending order.
+The `arrange()` function in `dplyr` allows you to order a data frame by just
+adding the column names as parmeters. Use `desc()` to arrange in descending order.
 
 ```{r, eval=FALSE}
 airdata <- arrange(airdata, desc(parameter), datetime)
@@ -91,7 +93,7 @@ d <- filter(airdata, parameter == 62101, poc == 1)
 dim(d)
 ```
 
-# summarise rows with group_by() and summarise() {#summarise}
+# Summarise rows with group_by() and summarise() {#summarise}
 
 Suppose we want to summarise the value for each day in `airdata`. We can use the `substr()`
 function to grab the first 8 characters of the "datetime" column. The `start` and `stop`
@@ -134,7 +136,7 @@ d_daily_mean <- summarise(d_daily_mean, daily_mean = mean(value, na.rm = FALSE))
 head(d_daily_mean, 3)
 ```
 
-The resulting [data frame](#classes) has just three columns: site, parameter, date, and daily_mean.
+The resulting data frame has just four columns: site, parameter, date, and daily_mean.
 Instead of limitting yourself to just one site and one parameter before calculating the daily mean,
 `summarise()` allows you to take all of the grouping information from the `group_by` function and
 calculate all of the daily values for each site and parameter.
@@ -147,11 +149,22 @@ table(d_daily_mean[, c("site", "parameter")])
 # `dplyr` classes {#classes}
 
 The output of some `dplyr` functions aren't always strictly a `data.frame`. For instance, the output of the `group_by` function is an object with the following classes: `grouped_df`, `tbl_df`, `tbl`, and `data.frame`. This is something to be aware of, if you find your `dplyr` output won't behave the way
-a `data.frame` normally should.
+a `data.frame` normally should. An easy fix is to just turn it back into a
+data frame using `as.data.frame()`
+
+```{r}
+class(d_daily_mean)
+d_daily_mean <- as.data.frame(d_daily_mean)
+class(d_daily_mean)
+```
 
 # Additional comments on `dplyr` 
 
 - Some functions don't appear to be that much easier to use than base R (like `select()` or `arrange()`). But `dplyr` provides a suite of functions _with the same syntax_ so that you can easily remember them. 
 - `dplyr` is fast.
-- You can use `dplyr` with databases.
+- You can use `dplyr` [with databases](https://cran.r-project.org/web/packages/dplyr/vignettes/databases.html).
 
+# Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/datamanip1exercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
+material.

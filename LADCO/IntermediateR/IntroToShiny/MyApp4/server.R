@@ -1,8 +1,8 @@
 library(dygraphs)
 library(leaflet)
 library(xts)
-chicago_air <- read.csv(text = '
-                        "date","ozone","temp","solar","month","weekday"
+library(dplyr)
+chicago_air <- read.csv(text = '"date","ozone","temp","solar","month","weekday"
                         "2013-01-01",0.032,17,0.65,1,3
                         "2013-01-02",0.02,15,0.61,1,4
                         "2013-01-03",0.021,28,0.17,1,5
@@ -367,17 +367,17 @@ chicago_air <- read.csv(text = '
                         "2013-12-28",0.026,NA,0.61,12,7
                         "2013-12-29",0.029,NA,0.08,12,1
                         "2013-12-30",0.024,NA,0.44,12,2
-                        "2013-12-31",0.021,NA,0.49,12,3
-                        ', stringsAsFactors = FALSE)
-#chicago_air$date <- as.Date(chicago_air$date)
-chicago_dy <- chicago_air[, c("ozone", "temp", "solar")]
-rownames(chicago_dy) <- chicago_air[, "date"]
+                        "2013-12-31",0.021,NA,0.49,12,3',
+                        row.names = 1, stringsAsFactors = FALSE)
+
+
 
 # Define server logic required to plot the time series
 shinyServer(function(input, output) {
   
   output$dygraph <- renderDygraph({
-    dygraph(chicago_dy[, input$parameter])
+    dy <- as.xts(select_(chicago_air, input$parameter))
+    dygraph(dy)
   })
   
   output$dataTable <- renderDataTable({

@@ -5,7 +5,8 @@ output: html_document
 
 Many R packages have been developed to visualize and analyze spatial data. The best 
 comprehensive resource that I've found on this topic is the book
-[Applied Spatial Data Analysis with R](http://www.amazon.com/Applied-Spatial-Data-Analysis-Use/dp/1461476178). This tutorial relies heavily on that book.
+<a href="http://www.amazon.com/Applied-Spatial-Data-Analysis-Use/dp/1461476178" target="_blank">
+Applied Spatial Data Analysis with R</a>. This tutorial relies heavily on that book.
 
 - [The sp package](#sp)
 - [Spatial objects](#Spatial)
@@ -21,7 +22,7 @@ data objects. These objects can then be easily fed into functions that can vizua
 and analyze the contents of the object. 
 
 The `sp` package is a foundational package for dealing with spatial data. It provides classes and methods for making S4 objects in R. (For an explanation of S4 objects, see Hadley Wickham's page on object oriented programming in 
-[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)). 
+<a href="http://adv-r.had.co.nz/OO-essentials.html" target="_blank">Advanced R</a>. 
 
 
 ## `Spatial` {#Spatial}
@@ -44,8 +45,9 @@ bounding_box
 ```
 
 The second argument, `proj4string`, takes a string that specifies which projection
-the coordinates are in. See the [`proj4` package](https://cran.r-project.org/web/packages/proj4/) 
-for details on which strings to use. The simplest string is "+proj=longlat".
+the coordinates are in. See the 
+<a href="https://cran.r-project.org/web/packages/proj4/" target="_blank">`proj4` 
+package</a> for details on which strings to use. The simplest string is "+proj=longlat".
 
 ```{r}
 projection <- "+proj=longlat" 
@@ -219,7 +221,7 @@ functions in R.
 
 Here, we plot the `SpatialPoints` object we created, using the monitors in `airdata`.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(maps)
 m <- map(database = 'county', regions = c('illinois,cook', 'illinois,lake', 'illinois,du page',
                                      'illinois,kane', 'illinois,mchenry', 'indiana,lake',
@@ -235,7 +237,8 @@ map(m)
 plot(air_spdf[air_spdf$ozone == "yes", ], pch = 19, col = "blue", add = TRUE)
 ```
 
-Then we can add PM2.5 monitors to the map.
+Then we can add PM2.5 monitors to the map, using a different color to distinguish
+the two pollutants.
 
 ```{r, eval=FALSE}
 plot(air_spdf[air_spdf$pm2.5 == "yes", ], pch = 19, col = "red", add = TRUE)
@@ -246,3 +249,26 @@ map(m)
 plot(air_spdf[air_spdf$ozone == "yes", ], pch = 19, col = "blue", add = TRUE)
 plot(air_spdf[air_spdf$pm2.5 == "yes", ], pch = 19, col = "red", add = TRUE)
 ```
+
+# Further Reading
+
+This tutorial is a minimal introduction to the spatial data objects in R. Below 
+is a list of resources for learning more about what you can do with R and geographic
+data.
+
+* For a good introduction to using GIS data in R, see
+<a href="https://cran.r-project.org/doc/contrib/intro-spatial-rl.pdf" target="_blank">this vignette</a>.
+
+* For a comprehensive overview of spatial data and analysis in R, see
+<a href="http://www.amazon.com/Applied-Spatial-Data-Analysis-Use/dp/1461476178" target="_blank">
+Applied Spatial Data Analysis with R</a>.
+
+* The 
+<a href="https://cran.r-project.org/web/views/Spatial.html" target="_blank"> CRAN Task
+View on Analysis of Spatial Data</a> should be a comprehensive list of R packages
+on CRAN that can be used for spatial analysis.
+
+# Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/spatialexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
+material.

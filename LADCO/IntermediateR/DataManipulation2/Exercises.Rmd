@@ -5,7 +5,8 @@ output: html_document
 
 ## Exercises {#ex}
 
-These exercises accompany the [Data Manipulation 2](http://rpubs.com/NateByers/datamanip2) tutorial. 
+These exercises accompany the 
+<a href="http://rpubs.com/NateByers/datamanip2" target="_blank">Data Manipulation 2</a> tutorial. 
 
 1. Use the `mutate()` function to add two columns to the `chicago_air` dataset: a column named
 "violation" indicating when the ozone value is above 0.075 ppm and a column named
@@ -27,6 +28,11 @@ a wide data frame.
 monthly maximum values.
 
 [Solution](#ex4)
+
+5. Reshape the monthly data from exercise 4 to a long format and plot it using
+`ggplot()`.
+
+[Solution](#ex5)
 
 ## Solutions
 
@@ -88,6 +94,17 @@ air_monthly <- group_by(chicago_air, month)
 air_monthly <- summarize_each(air_monthly, funs(max(., na.rm = TRUE)),
                               -(weekday), -(date))
 air_monthly
+```
+
+[Back to exercises](#ex)
+
+### Solution 5 {#ex5}
+
+```{r}
+air_monthly_long <- gather(air_monthly, parameter, value, ozone:solar)
+library(ggplot2)
+p <- ggplot(air_monthly_long, aes(month, value)) 
+p + geom_line() + facet_grid(parameter ~., scales = "free")
 ```
 
 [Back to exercises](#ex)

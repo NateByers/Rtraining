@@ -18,7 +18,7 @@ We already know that when we use a function, we need to know what the arguments 
 For example, if we want to use the `mean()` function, we look at the documentation
 by typing `?mean()`.
 
-The first function we write will be our own version of a funciton that calculates
+The first function we write will be our own version of a function that calculates
 the mean of a numeric vector. Since we can't just call it `mean` (or, if we do, we will
 replace that base function in our environment), we will call our function `myMean`.
 
@@ -30,7 +30,7 @@ myMean <- function( ){
 }
 ```
 
-A function is created by using another function called... `function()`. The parentheses will
+A function is created by using another function called `function()`. The parentheses will
 contain the parameters we want our function to have, and the curly braces will contain the 
 operation that will be performed on the parameters. First, we'll need a vector of numbers,
 so we'll call it the `x` parameter.
@@ -186,3 +186,8 @@ ozone values in the `chicago_air` data frame by month.
 ```{r}
 tapply(chicago_air$ozone, list(chicago_air$month), max, na.rm = TRUE)
 ```
+
+# Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/funcexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
+material.

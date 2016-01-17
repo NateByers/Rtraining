@@ -5,7 +5,8 @@ output: html_document
 
 ## Exercises {#ex}
 
-These exercises accompany the [Data Manipulation 1](http://rpubs.com/NateByers/datamanip1) tutorial. 
+These exercises accompany the 
+<a href="http://rpubs.com/NateByers/datamanip1" target="_blank">Data Manipulation Part 1</a> tutorial. 
 
 1. From `airdata`, use `select()` to create a `monitors` data frame with columns "site", "lat", "lon", and "GISDatum".
 

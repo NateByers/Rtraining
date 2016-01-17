@@ -64,13 +64,14 @@ img {
 </div>
 
 
-<p>This turial will cover how to merge data frames using the base R and <code>dplyr</code>.</p>
+<p>This turial will cover how to merge data frames using base R and <code>dplyr</code>.</p>
 <ul>
 <li><a href="#base">Base R <code>merge()</code></a></li>
 <li><a href="#dplyr">Merging with <code>dplyr</code></a></li>
 <li><a href="#filter">Filtering joins with <code>dplyr</code></a></li>
 </ul>
 <p>We will be using AQS tables to merge with a summarized version of the <code>airdata</code> dataset from the <code>region5air</code> package.</p>
+<p>First, we create year and state columns in <code>airdata</code> and then we make a summary table of the yearly mean for each site/parameter.</p>
 <pre class="r"><code>library(region5air)
 library(dplyr)
 
@@ -96,6 +97,7 @@ air</code></pre>
 ## 9  840170311003    17  2014     44201     7 0.02713999
 ## 10 840170311601    17  2013     44201     7 0.02624174
 ## ..          ...   ...   ...       ...   ...        ...</code></pre>
+<p>Then we get the state and county AQS table by reading it directly into R using the url on EPA’s website.</p>
 <pre class="r"><code>aqs_states &lt;- read.csv(&quot;https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv&quot;,
                        skip = 1, stringsAsFactors = FALSE)
 head(aqs_states)</code></pre>
@@ -106,54 +108,54 @@ head(aqs_states)</code></pre>
 ## 4    Alabama         AL         01      4        Bibb           7
 ## 5    Alabama         AL         01      4      Blount           9
 ## 6    Alabama         AL         01      4     Bullock          11</code></pre>
-<pre class="r"><code>aqs_units &lt;- read.csv(&quot;https://aqs.epa.gov/aqsweb/codes/data/Units.csv&quot;,
-                      skip = 1, stringsAsFactors = FALSE)
-head(aqs_units)</code></pre>
-<pre><code>##   Unit                     Unit.Desc
-## 1    1 Micrograms/cubic meter (25 C)
-## 2    2  Micrograms/cubic meter (0 C)
-## 3    3  Nanograms/cubic meter (25 C)
-## 4    4   Nanograms/cubic meter (0 C)
-## 5    5 Milligrams/cubic meter (25 C)
-## 6    6  Milligrams/cubic meter (0 C)</code></pre>
 <div id="base" class="section level1">
 <h1>Merging in base R</h1>
-<p>Merging two data frames can be accomplished in base R using the <code>merge()</code> function. To merge, there must be one or more columns that the two tables have in common. If we wanted to merge the <code>air</code> dataset and the <code>aqs_states</code> table, we can see that the common column is <code>state</code> and <code>State.Code</code> respectively.</p>
+<p>Merging two data frames can be accomplished in base R using the <code>merge()</code> function. To merge, there must be one or more columns that the two tables have in common. If we wanted to merge the <code>air</code> dataset and the <code>aqs_states</code> table, we can see that the common columns are “state” and “State.Code” respectively.</p>
 <p>The first two arguments of the <code>merge()</code> function are the two data frames to be merged. If there are column names that are the same in the two data frames, then the default behavior is to the merge on those column names, and no other parameter is required.</p>
 <p>As an example, let’s make a copy of the <code>aqs_states</code> table and change the <code>State.Code</code> name to <code>state</code>.</p>
 <pre class="r"><code>b_states &lt;- aqs_states
 names(b_states)[names(b_states) == &quot;State.Code&quot;] &lt;- &quot;state&quot;</code></pre>
 <p>Now we can merge by using just the two data frames as arguments.</p>
 <pre class="r"><code>b &lt;- merge(air, b_states)
-head(as.tbl(b))</code></pre>
-<pre><code>## Source: local data frame [6 x 11]
+as.tbl(b)</code></pre>
+<pre><code>## Source: local data frame [6,180 x 11]
 ## 
-##   state         site  year parameter  unit       mean State.Name
-##   (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
-## 1    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 2    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 3    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 4    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 5    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 6    17 840170310001  2013     44201     7 0.02337084   Illinois
+##    state         site  year parameter  unit       mean State.Name
+##    (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
+## 1     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 2     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 3     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 4     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 5     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 6     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 7     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 8     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 9     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 10    17 840170310001  2013     44201     7 0.02337084   Illinois
+## ..   ...          ...   ...       ...   ...        ...        ...
 ## Variables not shown: State.Abbr (chr), Region (int), County.Name (chr),
 ##   County.Code (int)</code></pre>
 <p>If there are no common names, then we must use the <code>by.x</code> and <code>by.y</code> parameters.</p>
 <pre class="r"><code>b &lt;- merge(air, aqs_states, by.x = &quot;state&quot;, by.y = &quot;State.Code&quot;)
-head(as.tbl(b))</code></pre>
-<pre><code>## Source: local data frame [6 x 11]
+as.tbl(b)</code></pre>
+<pre><code>## Source: local data frame [6,180 x 11]
 ## 
-##   state         site  year parameter  unit       mean State.Name
-##   (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
-## 1    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 2    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 3    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 4    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 5    17 840170310001  2013     44201     7 0.02337084   Illinois
-## 6    17 840170310001  2013     44201     7 0.02337084   Illinois
+##    state         site  year parameter  unit       mean State.Name
+##    (chr)        (chr) (chr)     (int) (int)      (dbl)      (chr)
+## 1     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 2     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 3     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 4     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 5     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 6     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 7     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 8     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 9     17 840170310001  2013     44201     7 0.02337084   Illinois
+## 10    17 840170310001  2013     44201     7 0.02337084   Illinois
+## ..   ...          ...   ...       ...   ...        ...        ...
 ## Variables not shown: State.Abbr (chr), Region (int), County.Name (chr),
 ##   County.Code (int)</code></pre>
-<p>The default operation of <code>merge()</code> is an inner join. This means that, in column(s) in common between the two data frames, only records that match will be kept. In the example above, only states with the state codes in the <code>aqs_states</code> data frame that were also in the <code>state</code> column of the <code>air</code> data frame were kept.</p>
+<p>The default operation of <code>merge()</code> is an inner join. This means that, in columns that are shared among the two data frames, only records that match will be kept. In the example above, only states with the state codes in the <code>aqs_states</code> data frame that were also in the “state” column of the <code>air</code> data frame were kept.</p>
 <pre class="r"><code>unique(air$state)</code></pre>
 <pre><code>## [1] &quot;17&quot; &quot;18&quot; &quot;55&quot;</code></pre>
 <pre class="r"><code>unique(aqs_states$State.Code)</code></pre>
@@ -203,7 +205,7 @@ pollutants &lt;- read.table(header=T, text='
 </div>
 <div id="merging-with-dplyr" class="section level1">
 <h1>Merging with <code id="dplyr">dplyr</code></h1>
-<p>The <code>dplyr</code> package has functions that can do all of the operations that <code>merge()</code> can. Similar to <code>merge()</code>, the functions in <code>dplyr</code> have you specify which colums to merge on, or it merges on any column names that are in common. However, there is one <code>by</code> parameter.</p>
+<p>The <code>dplyr</code> package has functions that can do all of the operations that <code>merge()</code> can. Similar to <code>merge()</code>, the functions in <code>dplyr</code> have you specify which colums to merge on, or it merges on any column names that are in common. However, there is only one <code>by</code> parameter.</p>
 <pre class="r"><code>b &lt;- inner_join(air, aqs_states, by = c(&quot;state&quot; = &quot;State.Code&quot;))
 head(b)</code></pre>
 <pre><code>## Source: local data frame [6 x 11]
@@ -264,6 +266,10 @@ head(b)</code></pre>
 <pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
 <pre><code>##   monitorid      lat      long
 ## 1         3 39.11054 -90.32408</code></pre>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<p>Go to the <a href="http://rpubs.com/NateByers/mergingexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.</p>
 </div>
 
 

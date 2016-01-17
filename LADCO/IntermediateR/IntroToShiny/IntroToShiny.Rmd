@@ -1,5 +1,8 @@
 ---
 title: "Intro to Shiny"
+resource_files:
+- MyApp/ui.R
+- MyApp/server.R
 runtime: shiny
 output: html_document
 ---
@@ -15,7 +18,7 @@ website.
 
 To make a Shiny app you need to have two `.R` scripts in the same folder:
 
-* a user-interface script (ui)
+* a user-interface (ui) script 
 * a server script
 
 ## ui.R
@@ -86,6 +89,8 @@ scripts for the __Hello Shiny__ app are found in the `shiny` library, so you can
 run this app by placing the directory in the first argument:
 
 ```{r, eval=FALSE}
+library(shiny)
+
 folder <- system.file("examples/01_hello", package="shiny")
 
 runApp(appDir = folder)
@@ -155,9 +160,14 @@ runApp("ChicagoApp")
 
 ```{r, echo=FALSE}
 shinyAppDir(
-  "MyApp",
+  "./MyApp",
   options=list(
     width="100%", height=550
   )
 )
 ```
+
+# Exercises
+
+Go to the <a href="https://natebyers.shinyapps.io/ShinyExercises/" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
+material.

@@ -66,7 +66,7 @@ img {
 
 <div id="ex" class="section level2">
 <h2>Exercises</h2>
-<p>These exercises accompany the <a href="http://rpubs.com/NateByers/datamanip1">Data Manipulation 1</a> tutorial.</p>
+<p>These exercises accompany the <a href="http://rpubs.com/NateByers/datamanip1" target="_blank">Data Manipulation Part 1</a> tutorial.</p>
 <ol style="list-style-type: decimal">
 <li>From <code>airdata</code>, use <code>select()</code> to create a <code>monitors</code> data frame with columns “site”, “lat”, “lon”, and “GISDatum”.</li>
 </ol>
@@ -272,7 +272,7 @@ table(select(chicago_o3, site, poc))</code></pre>
 ##   840181270026  8654     0
 ##   840550590019 10651     0
 ##   840550590025  9199     0</code></pre>
-<p>So there are 23 sites and only one poc value per site, so we don’t have to worry about more than one value per site/hour. We can simply group by site and date.</p>
+<p>There are 23 sites and only one poc value per site, so we don’t have to worry about more than one value per site/hour. We can simply group by site and date.</p>
 <pre class="r"><code># first make date column
 chicago_o3$date &lt;- substr(chicago_o3$datetime, 1, 8)
 chicago_o3 &lt;- group_by(chicago_o3, site, date)</code></pre>

@@ -12,6 +12,9 @@ This turial will cover how to merge data frames using base R and `dplyr`.
 We will be using AQS tables to merge with a summarized version of the `airdata` dataset
 from the `region5air` package.
 
+First, we create year and state columns in `airdata` and then we make a summary
+table of the yearly mean for each site/parameter.
+
 ```{r, message=FALSE, warning=FALSE}
 library(region5air)
 library(dplyr)
@@ -23,6 +26,9 @@ air <- group_by(airdata, site, state, year, parameter, unit)
 air <- summarise(air, mean = mean(value, na.rm = TRUE))
 air
 ```
+
+Then we get the state and county AQS table by reading it directly into R using
+the url on EPA's website.
 
 ```{r, eval=FALSE}
 aqs_states <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv",
@@ -58,17 +64,17 @@ Now we can merge by using just the two data frames as arguments.
 
 ```{r}
 b <- merge(air, b_states)
-head(as.tbl(b))
+as.tbl(b)
 ```
 
 If there are no common names, then we must use the `by.x` and `by.y` parameters. 
 
 ```{r}
 b <- merge(air, aqs_states, by.x = "state", by.y = "State.Code")
-head(as.tbl(b))
+as.tbl(b)
 ```
 
-The default operation of `merge()` is an inner join. This means that, in column(s) that
+The default operation of `merge()` is an inner join. This means that, in columns that
 are shared among the two data frames, only records that match will be kept. In the example
 above, only states with the state codes in the `aqs_states` data frame that were also in
 the "state" column of the `air` data frame were kept.
@@ -129,7 +135,7 @@ merge(pollutants, monitors, all = TRUE)
 
 The `dplyr` package has functions that can do all of the operations that `merge()` can.
 Similar to `merge()`, the functions in `dplyr` have you specify which colums to merge on,
-or it merges on any column names that are in common. However, there is one `by` parameter.
+or it merges on any column names that are in common. However, there is only one `by` parameter.
 
 ```{r}
 b <- inner_join(air, aqs_states, by = c("state" = "State.Code"))
@@ -172,3 +178,7 @@ frame that are not also in the `pollutants` data frame. We can use the `anti_joi
 ```{r}
 anti_join(monitors, pollutants)
 ```
+
+# Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/mergingexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.

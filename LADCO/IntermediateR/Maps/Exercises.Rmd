@@ -5,7 +5,8 @@ output: html_document
 
 ## Exercises {#ex}
 
-These exercises accompany the [Maps](http://rpubs.com/NateByers/maps) tutorial. 
+These exercises accompany the 
+<a href="http://rpubs.com/NateByers/maps" target="_blank">Maps</a> tutorial. 
 
 Use the following code to download 2014 daily No~2~ data for the United States. 
 This data will be used in the excercises.
@@ -14,7 +15,7 @@ This data will be used in the excercises.
 # create a temporary file
 temp <- tempfile()
 
-# download the .zip file to a temporary file--this will take several minutes
+# download the .zip file to a temporary file--this might take a minute or two
 download.file('http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/daily_42602_2014.zip', temp)
 
 # unzip temporary file to your working directory
@@ -48,13 +49,18 @@ label them with the "City.Name" column.
 
 [Solution](#ex3)
 
-4. Use `googleVis` to make a Google map of the Ohio monitors.
+4. Use `choroplethr` to make a heat map of the number of NO~2~ monitors
+in each state.
 
 [Solution](#ex4)
 
-5. Use `leaflet` to make a Leaflet map of the Ohio monitors.
+5. Use `googleVis` to make a Google map of the Ohio monitors.
 
 [Solution](#ex5)
+
+6. Use `leaflet` to make a Leaflet map of the Ohio monitors.
+
+[Solution](#ex6)
 
 ## Solutions
 
@@ -101,6 +107,34 @@ text(x = ohio$Longitude, y = ohio$Latitude, labels = ohio$City.Name, pos = 4)
 
 ### Solution 4 {#ex4}
 
+Make a summary table of the number of NO~2~ monitors in each state.
+
+```{r}
+monitors <- group_by(no2_annual, State.Name)
+monitors <- summarize(monitors, value = n())
+```
+
+Make a column named "region" that is all lowercase state names and has a `character`
+class. Remove non-states.
+
+```{r}
+monitors$region <- as.character(tolower(monitors$State.Name))
+monitors <- filter(monitors, region != "puerto rico")
+```
+
+Plot.
+
+```{r, message=FALSE, warning=FALSE}
+library(choroplethr)
+no2_map <- state_choropleth(monitors[, c("region", "value")],
+                                  legend = "NO2 Monitors")
+no2_map
+```
+
+[Back to exercises](#ex)
+
+### Solution 5 {#ex5}
+
 ```{r, warning=FALSE, message=FALSE}
 library(googleVis)
 ```
@@ -125,7 +159,7 @@ options(op)
 
 [Back to exercises](#ex)
 
-### Solution 5 {#ex5}
+### Solution 6 {#ex6}
 
 ```{r, warning=FALSE}
 library(leaflet)

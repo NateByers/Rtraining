@@ -6,6 +6,7 @@ output: html_document
 In this tutorial we'll cover the following topics:
 
 * [Basic Maps](#basic)
+* [Heat Maps](#heat)
 * [Google Maps](#google)
 * [Leaflet Maps](#leaflet)
 
@@ -79,7 +80,128 @@ title(main = "Air Monitor Locations")
 text(x = monitors$long, y = monitors$lat, labels = monitors$name, pos = 2)
 ```
 
+# Heat Maps {#heat}
 
+The `choroplethr` packages makes it fairly easy to create heat maps in R. 
+For illustration, we'll grab some data on non-attainment areas from 
+<a href="http://www3.epa.gov/airquality/greenbook/hntc.html" target="_blank">this
+EPA site</a>. 
+
+```{r, eval=FALSE}
+library(XML)
+library(dplyr)
+
+# scrape the table
+table <- readHTMLTable("http://www3.epa.gov/airquality/greenbook/hntc.html")[[1]]
+
+# get the state column as a vector
+states <- table[, dim(table)[2]]
+
+# change to character
+states <- as.character(states)
+
+# split the hyphenated elements 
+states <- lapply(states, strsplit, split = "-")
+
+# make one vector
+nonattain <- c()
+for(i in states){
+  x <- i[[1]]
+  if(!is.na(x[1])){
+    nonattain <- c(nonattain, x)
+  }
+}
+
+# make table of total nonattainment areas per state
+nonattain_df <- data.frame(state = nonattain)
+nonattain_df <- group_by(nonattain_df, state)
+nonattain_df <- summarize(nonattain_df, value = n())
+
+nonattain_df
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(XML)
+library(dplyr)
+table <- read.csv("nonattainment.csv", stringsAsFactors = FALSE)
+# get the state column as a vector
+states <- table[, dim(table)[2]]
+
+# change to character
+states <- as.character(states)
+
+# split the hyphenated elements 
+states <- lapply(states, strsplit, split = "-")
+
+# make one vector
+nonattain <- c()
+for(i in states){
+  x <- i[[1]]
+  if(!is.na(x[1])){
+    nonattain <- c(nonattain, x)
+  }
+}
+
+# make table of total nonattainment areas per state
+nonattain_df <- data.frame(state = nonattain)
+nonattain_df <- group_by(nonattain_df, state)
+nonattain_df <- summarize(nonattain_df, value = n())
+
+nonattain_df
+```
+
+Now we'll use the `choroplethr` package to make a heat map
+of the number of nonattainment areas for 8-hr ozone (2008 standard) by state.
+
+```{r, eval=FALSE}
+library(choroplethr)
+
+# get state AQS table to get state names
+state_codes <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv",
+                        skip = 1, stringsAsFactors = FALSE)
+
+state_codes <- unique(select(state_codes, State.Name, State.Abbr))
+
+# full join with nonattain_df and convert NAs to zero
+nonattain_df <- full_join(nonattain_df, state_codes, 
+                          by = c("state" = "State.Abbr"))
+nonattain_df[is.na(nonattain_df)] <- 0
+
+# filter out regions that are not states and make lowercase state column
+nonattain_df <- filter(nonattain_df, 
+                       !state %in% c("CC", "MX", "GU", "PR", "VI"))
+nonattain_df$region <- tolower(nonattain_df$State.Name)
+
+nonattain_map <- state_choropleth(nonattain_df[, c("region", "value")], 
+                                  title = "2008 8-hr Ozone Standard",
+                                  legend = "Nonattain Areas")
+nonattain_map
+```
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=8}
+library(choroplethr)
+
+# get state AQS table to get state names
+state_codes <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv",
+                        skip = 1, stringsAsFactors = FALSE)
+
+state_codes <- unique(select(state_codes, State.Name, State.Abbr))
+
+# full join with nonattain_df and convert NAs to zero
+nonattain_df <- full_join(nonattain_df, state_codes, 
+                          by = c("state" = "State.Abbr"))
+nonattain_df[is.na(nonattain_df)] <- 0
+
+# filter out regions that are not states and make lowercase state column
+nonattain_df <- filter(nonattain_df, 
+                       !state %in% c("CC", "MX", "GU", "PR", "VI"))
+nonattain_df$region <- tolower(nonattain_df$State.Name)
+
+nonattain_map <- state_choropleth(nonattain_df[, c("region", "value")], 
+                                  title = "2008 8-hr Ozone Standard",
+                                  legend = "Nonattain Areas")
+nonattain_map
+```
 
 # Google Maps {#google}
 
@@ -125,5 +247,7 @@ m <- addMarkers(m, lng=monitors$long, lat=monitors$lat,
 m
 ```
 
+# Exercises
 
+Go to the <a href="http://rpubs.com/NateByers/mapexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
 

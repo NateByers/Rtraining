@@ -72,13 +72,13 @@ img {
 <li><a href="#filter">filter()</a>, filtering rows</li>
 <li><a href="#summarise">summarise()</a>, summarizing rows</li>
 </ul>
-<p>We will be using the <code>airdata</code> dataset from the <code>region5air</code> package.</p>
+<p>We will be using the <code>airdata</code> dataset from the <code>region5air</code> package <a href="https://github.com/NateByers/region5air" target="_blank">on GitHub</a>.</p>
 <pre class="r"><code>library(region5air)
 data(airdata)</code></pre>
 <p>For each function we will review how to accomplish the task in base R, then see how the dplyr function accomplishes the same task.</p>
 <div id="select" class="section level1">
 <h1>Select columns with select()</h1>
-<p>If we wanted to select a few columns from <code>airdata</code>, we would need to either use numbers or names. Suppose we just wanted the site, time, parameter, and value:</p>
+<p>If we wanted to select a few columns from <code>airdata</code>, we would need to either use numbers or names. Suppose we just wanted the site, time, parameter, and value columns:</p>
 <pre class="r"><code>b &lt;- airdata[, c(&quot;site&quot;, &quot;datetime&quot;, &quot;parameter&quot;, &quot;value&quot;)]
 
 # equivalently
@@ -105,7 +105,8 @@ head(b, 3)</code></pre>
 ## 1 840170890005 20141231T0100-0600     44201       60         0 0.022
 ## 2 840170311601 20141231T0100-0600     44201       60         0 0.021
 ## 3 840170314002 20141231T0100-0600     44201       60         0 0.018</code></pre>
-<pre class="r"><code>d &lt;- select(airdata, site, datetime:value)
+<pre class="r"><code># using dplyr
+d &lt;- select(airdata, site, datetime:value)
 head(d, 3)</code></pre>
 <pre><code>##           site           datetime parameter duration frequency value
 ## 1 840170890005 20141231T0100-0600     44201       60         0 0.022
@@ -114,7 +115,7 @@ head(d, 3)</code></pre>
 </div>
 <div id="arrange" class="section level1">
 <h1>Arrange rows with arrange()</h1>
-<p>If we wanted to arrange <code>airdata</code> by first ordering by parameter then odering chronologically, this is how we would do it in base R.</p>
+<p>If we wanted to arrange<code>airdata</code> by first ordering the rows by parameter and then odering the rows chronologically, this is how we would do it in base R.</p>
 <pre class="r"><code>airdata &lt;- airdata[order(airdata$parameter, airdata$datetime), ]</code></pre>
 <p>The <code>arrange()</code> function in <code>dplyr</code> allows you to order a data frame by just adding the column names as parmeters. Use <code>desc()</code> to arrange in descending order.</p>
 <pre class="r"><code>airdata &lt;- arrange(airdata, desc(parameter), datetime)</code></pre>
@@ -131,7 +132,7 @@ dim(d)</code></pre>
 <pre><code>## [1] 41402    20</code></pre>
 </div>
 <div id="summarise" class="section level1">
-<h1>summarise rows with group_by() and summarise()</h1>
+<h1>Summarise rows with group_by() and summarise()</h1>
 <p>Suppose we want to summarise the value for each day in <code>airdata</code>. We can use the <code>substr()</code> function to grab the first 8 characters of the “datetime” column. The <code>start</code> and <code>stop</code> parameters are used to indicate which character is the starting position and which is the stopping position.</p>
 <pre class="r"><code># for example
 substr(&quot;20150101 00:00:00&quot;, start = 1, stop = 8)</code></pre>
@@ -158,7 +159,7 @@ head(d_daily_mean, 3)</code></pre>
 ## 1 840170310001     44201 20130403 0.03020000
 ## 2 840170310001     44201 20130404 0.02641667
 ## 3 840170310001     44201 20130405 0.03708333</code></pre>
-<p>The resulting <a href="#classes">data frame</a> has just three columns: site, parameter, date, and daily_mean. Instead of limitting yourself to just one site and one parameter before calculating the daily mean, <code>summarise()</code> allows you to take all of the grouping information from the <code>group_by</code> function and calculate all of the daily values for each site and parameter.</p>
+<p>The resulting data frame has just four columns: site, parameter, date, and daily_mean. Instead of limitting yourself to just one site and one parameter before calculating the daily mean, <code>summarise()</code> allows you to take all of the grouping information from the <code>group_by</code> function and calculate all of the daily values for each site and parameter.</p>
 <pre class="r"><code>table(d_daily_mean[, c(&quot;site&quot;, &quot;parameter&quot;)])</code></pre>
 <pre><code>##               parameter
 ## site           44201 62101 88101
@@ -191,15 +192,24 @@ head(d_daily_mean, 3)</code></pre>
 </div>
 <div id="classes" class="section level1">
 <h1><code>dplyr</code> classes</h1>
-<p>The output of some <code>dplyr</code> functions aren’t always strictly a <code>data.frame</code>. For instance, the output of the <code>group_by</code> function is an object with the following classes: <code>grouped_df</code>, <code>tbl_df</code>, <code>tbl</code>, and <code>data.frame</code>. This is something to be aware of, if you find your <code>dplyr</code> output won’t behave the way a <code>data.frame</code> normally should.</p>
+<p>The output of some <code>dplyr</code> functions aren’t always strictly a <code>data.frame</code>. For instance, the output of the <code>group_by</code> function is an object with the following classes: <code>grouped_df</code>, <code>tbl_df</code>, <code>tbl</code>, and <code>data.frame</code>. This is something to be aware of, if you find your <code>dplyr</code> output won’t behave the way a <code>data.frame</code> normally should. An easy fix is to just turn it back into a data frame using <code>as.data.frame()</code></p>
+<pre class="r"><code>class(d_daily_mean)</code></pre>
+<pre><code>## [1] &quot;grouped_df&quot; &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>d_daily_mean &lt;- as.data.frame(d_daily_mean)
+class(d_daily_mean)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
 </div>
 <div id="additional-comments-on-dplyr" class="section level1">
 <h1>Additional comments on <code>dplyr</code></h1>
 <ul>
 <li>Some functions don’t appear to be that much easier to use than base R (like <code>select()</code> or <code>arrange()</code>). But <code>dplyr</code> provides a suite of functions <em>with the same syntax</em> so that you can easily remember them.</li>
 <li><code>dplyr</code> is fast.</li>
-<li>You can use <code>dplyr</code> with databases.</li>
+<li>You can use <code>dplyr</code> <a href="https://cran.r-project.org/web/packages/dplyr/vignettes/databases.html">with databases</a>.</li>
 </ul>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<p>Go to the <a href="http://rpubs.com/NateByers/datamanip1exercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.</p>
 </div>
 
 

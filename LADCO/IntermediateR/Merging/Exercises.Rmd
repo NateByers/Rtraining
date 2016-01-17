@@ -5,7 +5,8 @@ output: html_document
 
 ## Exercises {#ex}
 
-These exercises accompany the [Merging](http://rpubs.com/NateByers/merging) tutorial. 
+These exercises accompany the 
+<a href="http://rpubs.com/NateByers/merging" target="_blank">Merging</a> tutorial. 
 
 1. Use the `merge()` function to merge `airdata` with the AQS units table found at 
 https://aqs.epa.gov/aqsweb/codes/data/Units.csv.
@@ -26,6 +27,23 @@ down to just the counties that have monitors in `airdata` using the
 down to parameters that are *not* in `airdata` using the `anti_join()` function.
 
 [Solution](#ex4)
+
+5. Do a full merge of the `pollutants` and `monitors` data frames from the 
+<a href="http://rpubs.com/NateByers/merging" target="_blank">Merging</a> tutorial. 
+Do a semi join with the table below, but only keep records where the Violation 
+column is TRUE.
+
+```{r}
+criteria <- read.table(header=T, text='
+  Parameter   Duration    Monitor   Violation              
+      ozone         1h          1       FALSE
+        so2         1h          1        TRUE
+      ozone         8h          2        TRUE
+        no2         1h          4       FALSE
+                       ')
+```
+
+[Solution](#ex5)
 
 ## Solutions
 
@@ -114,6 +132,38 @@ Now we filter down to rows with parameters that are not in `airdata`.
 missing_criteria <- anti_join(aqs_criteria, airdata, 
                               by = c("Parameter.Code" = "parameter"))
 missing_criteria
+```
+
+[Back to exercises](#ex)
+
+### Solution 5 {#ex5}
+
+```{r}
+monitors <- read.table(header=T, text='
+  monitorid        lat       long                 
+          1  42.467573 -87.810047     
+          2  42.049148 -88.273029
+          3  39.110539 -90.324080
+                       ')
+
+pollutants <- read.table(header=T, text='
+  pollutant   duration    monitorid                 
+      ozone         1h            1
+        so2         1h            1
+      ozone         8h            2
+        no2         1h            4
+                       ')
+
+mon_pol <- full_join(monitors, pollutants)
+
+criteria <- filter(criteria, Violation == TRUE)
+
+mon_pol <- semi_join(mon_pol, criteria, 
+                     by = c("pollutant" = "Parameter",
+                            "duration" = "Duration",
+                            "monitorid" = "Monitor"))
+
+mon_pol
 ```
 
 [Back to exercises](#ex)

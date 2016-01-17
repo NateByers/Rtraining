@@ -66,7 +66,7 @@ img {
 
 <div id="ex" class="section level2">
 <h2>Exercises</h2>
-<p>These exercises accompany the <a href="http://rpubs.com/NateByers/functionsApply">Writing Functions</a> tutorial.</p>
+<p>These exercises accompany the <a href="http://rpubs.com/NateByers/functions" target="_blank">Functions</a> tutorial.</p>
 <ol style="list-style-type: decimal">
 <li>Write a function that checks if a value is above a threshold value. The function should have two parameters: <code>x</code> which is the numeric value to check, and <code>threshold</code> which is the numeric threshold. Have the function return a logical value, <code>TRUE</code> if the value is above the threshold and <code>FALSE</code> if it is equal to or below the threshold.</li>
 </ol>
@@ -163,7 +163,7 @@ my_thresholds</code></pre>
 ## 1     ozone     0.075
 ## 2      temp    90.000
 ## 3     solar     1.250</code></pre>
-<p>Now we write a function that will take the two values in each row and find the sum of days above the threshold for that parameter.</p>
+<p>Next we write a function that will take the two values in each row and find the sum of days above the threshold for that parameter.</p>
 <pre class="r"><code>sumAboveThreshold &lt;- function(values, threshold){
   sum(sapply(values, checkAboveThreshold, standard = threshold))
 }</code></pre>

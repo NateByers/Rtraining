@@ -66,7 +66,7 @@ img {
 
 <div id="ex" class="section level2">
 <h2>Exercises</h2>
-<p>These exercises accompany the <a href="http://rpubs.com/NateByers/merging">Merging</a> tutorial.</p>
+<p>These exercises accompany the <a href="http://rpubs.com/NateByers/merging" target="_blank">Merging</a> tutorial.</p>
 <ol style="list-style-type: decimal">
 <li>Use the <code>merge()</code> function to merge <code>airdata</code> with the AQS units table found at <a href="https://aqs.epa.gov/aqsweb/codes/data/Units.csv" class="uri">https://aqs.epa.gov/aqsweb/codes/data/Units.csv</a>.</li>
 </ol>
@@ -83,6 +83,17 @@ img {
 <li>Subset the AQS Criteria table (<a href="https://aqs.epa.gov/aqsweb/codes/data/Parameters-CRITERIA.csv" class="uri">https://aqs.epa.gov/aqsweb/codes/data/Parameters-CRITERIA.csv</a>) down to parameters that are <em>not</em> in <code>airdata</code> using the <code>anti_join()</code> function.</li>
 </ol>
 <p><a href="#ex4">Solution</a></p>
+<ol start="5" style="list-style-type: decimal">
+<li>Do a full merge of the <code>pollutants</code> and <code>monitors</code> data frames from the <a href="http://rpubs.com/NateByers/merging" target="_blank">Merging</a> tutorial. Do a semi join with the table below, but only keep records where the Violation column is TRUE.</li>
+</ol>
+<pre class="r"><code>criteria &lt;- read.table(header=T, text='
+  Parameter   Duration    Monitor   Violation              
+      ozone         1h          1       FALSE
+        so2         1h          1        TRUE
+      ozone         8h          2        TRUE
+        no2         1h          4       FALSE
+                       ')</code></pre>
+<p><a href="#ex5">Solution</a></p>
 </div>
 <div id="solutions" class="section level2">
 <h2>Solutions</h2>
@@ -273,6 +284,38 @@ missing_criteria</code></pre>
 ## 15          12128         Lead (TSP) STP                     1 MONTH
 ## 16          12128         Lead (TSP) STP              COMPOSITE DATA
 ## 17          42101        Carbon monoxide                      1 HOUR</code></pre>
+<p><a href="#ex">Back to exercises</a></p>
+</div>
+<div id="ex5" class="section level3">
+<h3>Solution 5</h3>
+<pre class="r"><code>monitors &lt;- read.table(header=T, text='
+  monitorid        lat       long                 
+          1  42.467573 -87.810047     
+          2  42.049148 -88.273029
+          3  39.110539 -90.324080
+                       ')
+
+pollutants &lt;- read.table(header=T, text='
+  pollutant   duration    monitorid                 
+      ozone         1h            1
+        so2         1h            1
+      ozone         8h            2
+        no2         1h            4
+                       ')
+
+mon_pol &lt;- full_join(monitors, pollutants)</code></pre>
+<pre><code>## Joining by: &quot;monitorid&quot;</code></pre>
+<pre class="r"><code>criteria &lt;- filter(criteria, Violation == TRUE)
+
+mon_pol &lt;- semi_join(mon_pol, criteria, 
+                     by = c(&quot;pollutant&quot; = &quot;Parameter&quot;,
+                            &quot;duration&quot; = &quot;Duration&quot;,
+                            &quot;monitorid&quot; = &quot;Monitor&quot;))
+
+mon_pol</code></pre>
+<pre><code>##   monitorid      lat      long pollutant duration
+## 1         1 42.46757 -87.81005       so2       1h
+## 2         2 42.04915 -88.27303     ozone       8h</code></pre>
 <p><a href="#ex">Back to exercises</a></p>
 </div>
 </div>
