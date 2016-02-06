@@ -1,0 +1,144 @@
+---
+title: "Getting Data"
+output: 
+  html_document: 
+    theme: cosmo
+---
+
+## Introductions
+
+- Instructors: Nathan Byers and Kali Frost
+
+- Students: Please introduce yourself by telling us your name, where you work, 
+and your experience with R
+
+## Class Design
+
+- These tutorials are made available online so that you can go back and look through
+them when you return to work. 
+
+- The exercises are designed to help you repeat the commands that are in the exercises
+with just a few small changes.
+
+- Some tutorials will have material that is slightly more advanced and will be
+left to the student to read independently. Exercises will also have more difficult
+questions that will be clearly labeled as "Advanced".
+
+- After each tutorial there will be an open lab during which students are encouraged
+to work on the exercises. There will also be time for discussion if there are questions
+about the material or the exercises.
+
+- Please feel free to speak up and help your class-mates!
+
+## Topics
+
+In this session we will cover the following topics:
+
+- [Getting AQS data using the `raqdm` package](#raqdm)
+- [Reading in data from a website](#scraping)
+
+
+## Getting AQS data with `raqdm` {#raqdm}
+
+Eric Bailey has written an R package that makes it very easy to get AQS data into
+R. The package is located on  
+<a href= "https://github.com/ebailey78/raqdm" target="_blank">GitHub</a>. It utilizes
+U.S. EPA's <a href="https://aqs.epa.gov/api" target="_blank">AirData API</a>. To 
+use Query AirData you must register for an account. Once
+you register, you will use the username and password that the EPA provides to get
+data into R using `raqdmd`.
+
+__NOTE__: The code below will not work, because you need to provide your own
+username and password. Also, it wouldn't be a good idea for the entire class to 
+download large data sets all at the same time. The code below is for illustration,
+but we encourage you to use `raqdm` in your work flow.
+
+First, we need to install the `raqdm` package from github, using `devtools`.
+
+```{r, eval=FALSE}
+library(devtools)
+install_github("ebailey78/raqdm")
+library(raqdm)
+```
+
+Once the package is installed and we load it using the `library()` function,
+we use a function called `setAQDMuser()` which will set the username and password
+for us. If you set `save = TRUE` then your username and password will be saved
+for future R sessions.
+
+```{r, eval = FALSE}
+setAQDMuser(user = "me@email.com", pw = "secret", save = TRUE)
+```
+
+Once your user information has been saved, you can use the `getAQDMdata()` function
+to make a request for a specific data set. Right now, synchronous pulls are not
+possible, so the you must set `synchronous = FALSE`.
+
+```{r, eval = FALSE}
+benz_req <- getAQDMdata(state = "18", bdate = "20150101", edate = "20150102",
+                        param = "45201", synchronous = FALSE)
+```
+
+The code above does not return a data set. A request has been sent to EPA to pull
+that data from AQS, and an email is sent to you when the data is ready. Once that
+happens (usually just 1 or 2 minutes) you can run the `getAQDMrequest()` function
+to get the data in R.
+
+```{r, eval=FALSE}
+benz <- getAQDMrequest(benz_req)
+head(benz)
+```
+```{r, echo=FALSE}
+load("data.rda")
+head(benz[, 1:6])
+```
+
+
+
+## Reading in data from a website {#scraping}
+
+In a previous training we covered how to import a .csv file into R using the RStudio
+point-and-click option. We also covered how to use the `read.csv()` function to
+read in a .csv file. To use `read.csv()` you need to supply the file path as a
+quoted text in the first parameter. So if you had a file called "my_data.csv"
+that was located on your "C:/" drive, you would use the function like this
+
+```{r, eval=FALSE}
+my_data <- read.csv("C:/my_data.csv", stringsAsFactors = FALSE)
+```
+
+We set `stringsAsFactors = FALSE` to make sure that our data that should be a 
+character data type remains a character data type. 
+
+It is possible to read a website like a .csv file on your computer. Reading data
+from a website is sometimes called web-scraping. A good example of a url that can
+be easily scraped using R is <a href="https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv" target="_blank">
+https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv</a>. You can find page 
+by going to the EPA site for AQS codes (<a href="http://www.epa.gov/aqs/aqs-code-list"
+target="_blank">http://www.epa.gov/aqs/aqs-code-list</a>) then clicking  
+<a href="https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.html" target="_blank">
+Parameters</a> and <a href="https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv"
+target="_blank">Download Delimited Version of the Code Table</a>.
+
+You can actually see that the url has a .csv at the end of it. All we need to do
+to scrape that .csv file is to put the url as the file path in the `read.csv()`
+function. However, as you can see on the website, there is an initial line that
+isn't a part of the table. We'll need to skip that line, so we use the `skip`
+paramter to tell the function that we want to skip the first line.
+
+```{r, eval=FALSE}
+aqs_params <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv",
+                       stringsAsFactors = FALSE, skip = 1)
+head(aqs_params)
+```
+```{r, echo=FALSE}
+head(aqs_params[, 1:6])
+```
+
+This was a simple file to read from the web, but even data from more complicated 
+websites can be scraped. Check out Hadley Wickham's `rvest` package if you would
+like to do more scraping: <a href="https://github.com/hadley/rvest" target="_blank">
+https://github.com/hadley/rvest</a>. For advanced material on processing XML and 
+JSON formats in web services, check out the book *XML and Web Technologies for 
+Data Sciences with R*.
+
