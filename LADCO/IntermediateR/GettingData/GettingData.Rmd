@@ -35,17 +35,25 @@ about the material or the exercises.
 In this session we will cover the following topics:
 
 - [Getting AQS data using the `raqdm` package](#raqdm)
+
 - [Reading in data from a website](#scraping)
+
 - [Pulling a table from a local database](#database)
+
+#### Advanced Topics
+
+- [Downloading and extracting a zipped file](#zipped)
+
+- [Querying a database using SQL from R](#query)
 
 
 ## Getting AQS data with `raqdm` {#raqdm}
 
 Eric Bailey has written an R package that makes it very easy to get AQS data into
 R. The package is located on  
-<a href= "https://github.com/ebailey78/raqdm" target="_blank">GitHub</a>. It utilizes
+<a href= "https://github.com/FluentData/raqdm" target="_blank">GitHub</a>. It utilizes
 U.S. EPA's <a href="https://aqs.epa.gov/api" target="_blank">AirData API</a>. To 
-use Query AirData you must register for an account. Once
+use EPA's AirData you must register for an account. Once
 you register, you will use the username and password that the EPA provides to get
 data into R using `raqdmd`.
 
@@ -58,7 +66,7 @@ First, we need to install the `raqdm` package from github, using `devtools`.
 
 ```{r, eval=FALSE}
 library(devtools)
-install_github("ebailey78/raqdm")
+install_github("FluentData/raqdm")
 library(raqdm)
 ```
 
@@ -76,13 +84,17 @@ to make a request for a specific data set. Right now, synchronous pulls are not
 possible, so the you must set `synchronous = FALSE`.
 
 ```{r, eval = FALSE}
-benz_req <- getAQDMdata(state = "18", bdate = "20150101", edate = "20150102",
-                        param = "45201", synchronous = FALSE)
+benz_req <- getAQDMdata(state = "18", county = "089", bdate = "20150101",
+                        edate = "20151231", param = "45201", synchronous = FALSE)
 ```
 
 The code above does not return a data set. A request has been sent to EPA to pull
-that data from AQS, and an email is sent to you when the data is ready. Once that
-happens (usually just 1 or 2 minutes) you can run the `getAQDMrequest()` function
+that data from AQS, and an email is sent to you when the data is ready. The request
+is for benzene values from Lake County, Indiana from January 1 to December 31, 
+2015. 
+
+Once that request has been processed and you receive an email notification,
+(usually just 1 or 2 minutes) you can run the `getAQDMrequest()` function
 to get the data in R.
 
 ```{r, eval=FALSE}
@@ -91,7 +103,7 @@ head(benz)
 ```
 ```{r, echo=FALSE}
 load("data.rda")
-head(benz[, 1:6])
+benz
 ```
 
 
@@ -125,7 +137,7 @@ You can actually see that the url has a .csv at the end of it. All we need to do
 to scrape that .csv file is to put the url as the file path in the `read.csv()`
 function. However, as you can see on the website, there is an initial line that
 isn't a part of the table. We'll need to skip that line, so we use the `skip`
-paramter to tell the function that we want to skip the first line.
+parameter to tell the function that we want to skip the first line.
 
 ```{r, eval=FALSE}
 aqs_params <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv",
@@ -172,8 +184,9 @@ library(RSQLite)
 db <- dbConnect(drv = SQLite(), dbname = "Test.sqlite")
 ```
 
-That is how you make a connection to an SQLite database. If the database doesn't
-exist already it will create one.
+You make a connection to an SQLite database by providing the file path in the 
+`dbname` parameter. If the database doesn't exist already then a new SQLite
+database will be created.
 
 Now we will load the parameters table into the database.
 
@@ -208,7 +221,7 @@ head(aqs_params_db[, 1:6])
 head(aqs_params[, 1:6])
 ```
 
-Now we'll disconnect from the database and delete the database.
+Now we'll disconnect from the database and delete it from the working directory.
 
 ```{r}
 dbDisconnect(db)
@@ -217,12 +230,13 @@ unlink("Test.sqlite")
 
 ## Exercises
 
-- Exercises for this tutorial are found here.
-- Solutions to the exercises are found here.
+Exercises for this tutorial can be found here: 
+<a href="http://rpubs.com/NateByers/gettingDataExercises" target="_blank">
+http://rpubs.com/NateByers/gettingDataExercises</a>.
 
 ## Advanced Topics
 
-### Downloading and extracting a zipped file
+### Downloading and extracting a zipped file {#zipped}
 
 Sometimes you may want to automate the download of a large file that's zipped and
 read it into R. If we look at the 
@@ -256,11 +270,11 @@ head(data)
 data
 ```
 
-### Querying a database using SQL from R
+### Querying a database using SQL from R {#query}
 
 Not only can you make a connection to a database with R, but you can pass SQL
 statements to the database and retrieve the result inside of R. Here's an example
-of querying an SQLite databse in R.
+of querying an SQLite database in R.
 
 ```{r, eval=FALSE}
 library(RSQLite)
@@ -292,7 +306,7 @@ head(illinois_cities)
 illinois_cities
 ```
 
-Disconnect from the datbase and delete the database from your working directory.
+Disconnect from the database and delete the database from your working directory.
 
 ```{r, eval=FALSE}
 dbDisconnect(db_cities)

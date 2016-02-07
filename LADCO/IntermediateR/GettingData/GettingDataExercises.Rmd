@@ -1,0 +1,184 @@
+---
+title: 'Getting Data: Exercises'
+output: 
+  html_document: 
+    theme: readable
+---
+
+## Exercises {#ex}
+
+These exercises accompany the Getting Data tutorial: 
+<a href="http://rpubs.com/NateByers/gettingData" target="_blank">
+http://rpubs.com/NateByers/gettingData</a>. 
+
+1. To use the `raqdm` package you must have a user name and password from EPA.
+Register for an account here: <a href="https://aqs.epa.gov/api" target="_blank">
+https://aqs.epa.gov/api</a>. Assuming you had a user name and account, write
+R code that would request ozone data from all Illinois monitors between April 1 and
+September 30, 2015. For a list of parameter and state codes, go to the AQS codes
+website: <a href="http://www.epa.gov/aqs/aqs-code-list" target="_blank">
+http://www.epa.gov/aqs/aqs-code-list</a>.
+
+[Solution 1](#ex1)
+
+2. Write code that uses `raqdm` to send and receive a request for all criteria
+pollutant data for Cook County, Illinois between June 1 and August 31, 2015.
+__Hint__: You can use a `pc` parameter in `getAQDMdata` that will take a text value
+indicating a group of paramters ("CRITERIA"). You can also find county codes in
+the AQS codes website:
+<a href="http://www.epa.gov/aqs/aqs-code-list" target="_blank">
+http://www.epa.gov/aqs/aqs-code-list</a>.
+
+[Solution 2](#ex2)
+
+3. Use the `read.csv()` function to create a data frame of unit measurement
+information from the AQS codes website: <a href="http://www.epa.gov/aqs/aqs-code-list" target="_blank">
+http://www.epa.gov/aqs/aqs-code-list</a>.
+
+[Solution 3](#ex3)
+
+#### Advanced Exercise
+
+4. Create an `SQLite` database. Read in the parameters and units data from the 
+AQS codes website to load the database with two tables: Parameters and Units.
+Query the database and pull out a single table with parameters and unit information
+in it. __Hint__: In your SQL statement, you will need to use a JOIN statement 
+joining on the "Standard Unit" column in the Paramters table and the "Unit" column 
+in the Unit table.
+
+[Solution 4](#ex4)
+
+## Solutions
+
+#### Solution 1{#ex1}
+
+First, library the package and set your user name and password if you have not
+done so.
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+library(raqdm)
+setAQDMuser(user = "me@email.com", pw = "secret", save = TRUE)
+```
+
+On the AQS codes website we can find the number for Illinois (17) and the number
+for ozone (44201). So we send a request using the `getAQDMdata()` function, assigning
+the `synchronous` parameter a value of `FALSE`.
+
+```{r, eval=FALSE}
+ozone_req <- getAQDMdata(state = "17", bdate = "20150401", edate = "20150930", 
+                         param = "44201", synchronous = FALSE)
+```
+
+Then wait for the email notification. Once it arrives, run the `getAQDMrequest()`
+function.
+
+```{r, eval=FALSE}
+ozone <- getAQDMrequest(ozone_req)
+head(ozone)
+```
+```{r, echo=FALSE}
+load("exercise_data.rda")
+ozone
+```
+
+[Back to exercises](#ex)
+
+#### Solution 2{#ex2}
+
+On the AQS codes website we can find the number for Cook County (031). We send a 
+request using the `getAQDMdata()` function, assigning the `synchronous` parameter 
+a value of `FALSE` and assigning the `pc` parameter a value of `"CRITERIA"`.
+
+```{r, eval=FALSE}
+criteria_req <- getAQDMdata(state = "17", county = "031", bdate = "20150601", 
+                            edate = "20150831", pc = "CRITERIA", 
+                            synchronous = FALSE)
+```
+
+Then wait for the email notification. Once it arrives, run the `getAQDMrequest()`
+function.
+
+```{r, eval=FALSE}
+criteria <- getAQDMrequest(criteria_req)
+head(criteria)
+```
+```{r, echo=FALSE}
+criteria
+```
+
+[Back to exercises](#ex)
+
+#### Solution 3{#ex3}
+
+On the AQS codes website we can find the url for units by clicking on "Units"
+and then clicking on "Download Delimited Version of the Code Table". Copy and paste
+the url into `read.csv()` and assign the `skip` parameter a value of `1`.
+
+
+```{r, eval=FALSE}
+aqs_units <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/Units.csv",
+                      skip = 1, stringsAsFactors = FALSE)
+head(aqs_units)
+```
+```{r, echo=FALSE}
+head(aqs_units)
+```
+
+[Back to exercises](#ex)
+
+#### Solution 4{#ex4}
+
+Read the Parameters and Units into R from the AQS code website, if you have not
+done so already.
+
+
+```{r, eval=FALSE}
+aqs_params <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv",
+                       stringsAsFactors = FALSE, skip = 1)
+aqs_units <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/Units.csv",
+                      skip = 1, stringsAsFactors = FALSE)
+```
+
+You will need to replace the `.` between the words in the column names with `_`,
+or you won't be able to refer to field names in your SQL statement.
+
+```{r, eval=FALSE}
+names(aqs_params) <- sub("\\.", "_", names(aqs_params))
+names(aqs_units) <- sub("\\.", "_", names(aqs_units))
+```
+
+Create the database in your working directory and load the two tables.
+
+```{r}
+library(RSQLite)
+db_par_unit <- dbConnect(SQLite(), "par_unit.sqlite")
+dbWriteTable(db_par_unit, "Parameters", aqs_params)
+dbWriteTable(db_par_unit, "Units", aqs_units)
+dbListTables(db_par_unit)
+```
+
+Now we write a SQL statement that joins the "Standard_Unit" column of the Parameters
+table on the "Unit" column of the Units table. 
+
+```{r, eval=FALSE}
+query <- dbSendQuery(db_par_unit, 
+                     "SELECT Parameters.Parameter_Desc, 
+                             Parameters.Standard_Unit,
+                             Units.Unit_Desc
+                      FROM Parameters
+                      INNER JOIN Units
+                      ON Parameters.Standard_Unit = Units.Unit")
+param_units <- dbFetch(query)
+head(param_units)
+```
+```{r}
+param_units
+```
+
+Now we disconnect from the database and delete it.
+
+```{r}
+dbDisconnect(db_par_unit)
+unlink("par_unit.sqlite")
+```
+
+[Back to exercises](#ex)
