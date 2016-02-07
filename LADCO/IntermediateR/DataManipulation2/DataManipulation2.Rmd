@@ -10,6 +10,10 @@ This tutorial will cover the following functions from `dplyr` and `tidyr`:
 - [spread()](#spread)
 - [summarise_each() and mutate_each()](#each)
 
+Advanced topics
+
+- [`dplyr` and databases](#databases)
+
 # Window functions with mutate() and transmute(){#mutate}
 
 In the first <a href="http://rpubs.com/NateByers/datamanip1" target="_blank">Data Manipulation</a> tutorial we 
