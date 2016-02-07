@@ -2,7 +2,7 @@
 title: "Getting Data"
 output: 
   html_document: 
-    theme: cosmo
+    theme: readable
 ---
 
 ## Introductions
@@ -17,7 +17,7 @@ and your experience with R
 - These tutorials are made available online so that you can go back and look through
 them when you return to work. 
 
-- The exercises are designed to help you repeat the commands that are in the exercises
+- The exercises are designed to help you repeat the commands that are in the tutorials
 with just a few small changes.
 
 - Some tutorials will have material that is slightly more advanced and will be
@@ -36,6 +36,7 @@ In this session we will cover the following topics:
 
 - [Getting AQS data using the `raqdm` package](#raqdm)
 - [Reading in data from a website](#scraping)
+- [Pulling a table from a local database](#database)
 
 
 ## Getting AQS data with `raqdm` {#raqdm}
@@ -113,7 +114,7 @@ character data type remains a character data type.
 It is possible to read a website like a .csv file on your computer. Reading data
 from a website is sometimes called web-scraping. A good example of a url that can
 be easily scraped using R is <a href="https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv" target="_blank">
-https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv</a>. You can find page 
+https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.csv</a>. You can find the page 
 by going to the EPA site for AQS codes (<a href="http://www.epa.gov/aqs/aqs-code-list"
 target="_blank">http://www.epa.gov/aqs/aqs-code-list</a>) then clicking  
 <a href="https://aqs.epa.gov/aqsweb/codes/data/ParametersByDesc.html" target="_blank">
@@ -142,3 +143,158 @@ https://github.com/hadley/rvest</a>. For advanced material on processing XML and
 JSON formats in web services, check out the book *XML and Web Technologies for 
 Data Sciences with R*.
 
+## Pulling a table from a local database {#database}
+
+With R you can make connections to just about any kind of database. Below is
+a list of databases and the R packages that you can use to make connections and
+pull data.
+
+Database | R package | Requirement
+---------|----------
+Microsoft Access| RODBC
+Microsoft SQL Server| RSQLServer 
+Oracle | ROracle 
+MySQL and MariaDB | RMySQL
+PostgreSQL | RPostgreSQL
+SQLite | RSQLite
+
+We will illustrate how to pull a table out of a database by creating a simple SQLite
+database. 
+
+SQLite is an open source database that is very light and portable. Creating a database
+is very easy. We will use the Parameters table we downloaded from the AQS Codes
+site to make a database with just one table in it.
+
+Here we load the `RSQLite` package and create the database in our working directory.
+
+```{r}
+library(RSQLite)
+db <- dbConnect(drv = SQLite(), dbname = "Test.sqlite")
+```
+
+That is how you make a connection to an SQLite database. If the database doesn't
+exist already it will create one.
+
+Now we will load the parameters table into the database.
+
+```{r}
+dbWriteTable(conn = db, name = "Parameters", value = aqs_params)
+```
+
+Now we can check to see what tables are in the database.
+
+```{r}
+dbListTables(db)
+```
+
+And we can see what fields are in the table.
+
+```{r}
+dbListFields(db, "Parameters")
+```
+
+And finally, we can pull out the table and see that it's the same as the data frame
+that we put into it.
+
+```{r, eval=FALSE}
+aqs_params_db <- dbReadTable(db, "Parameters")
+head(aqs_params_db)
+head(aqs_params)
+```
+
+```{r, echo=FALSE, message=FALSE}
+aqs_params_db <- dbReadTable(db, "Parameters")
+head(aqs_params_db[, 1:6])
+head(aqs_params[, 1:6])
+```
+
+Now we'll disconnect from the database and delete the database.
+
+```{r}
+dbDisconnect(db)
+unlink("Test.sqlite")
+```
+
+## Exercises
+
+- Exercises for this tutorial are found here.
+- Solutions to the exercises are found here.
+
+## Advanced Topics
+
+### Downloading and extracting a zipped file
+
+Sometimes you may want to automate the download of a large file that's zipped and
+read it into R. If we look at the 
+<a href="http://www.epa.gov/air-emissions-inventories/2011-national-emissions-inventory-nei-data" target="_blank">National Emissions Inventory page</a> for 2011 we can see that
+there are ZIP CSV files under the heading "SCC Data Files". Below is code that 
+downloads the Nonpoint file to a temporary file, unzips it to your working directory,
+reads the file into R, and deletes the files on your machine.
+
+```{r, eval=FALSE}
+# create a temporary file
+temp <- tempfile()
+
+# download the .zip file to the temporary file
+download.file("ftp://ftp.epa.gov/EmisInventory/2011/2011neiv2_nonpoint.zip", temp)
+
+# unzip temporary file to your working directory
+unzip(temp)
+
+# delete the temporary file
+unlink(temp)
+
+# read the data into R--this will take a while
+data <- read.csv("2011v2_nonpoint.csv", stringsAsFactors = FALSE)
+
+# delete the file in your working directory
+unlink("2011v2_nonpoint.csv")
+
+head(data)
+```
+```{r, echo=FALSE}
+data
+```
+
+### Querying a database using SQL from R
+
+Not only can you make a connection to a database with R, but you can pass SQL
+statements to the database and retrieve the result inside of R. Here's an example
+of querying an SQLite databse in R.
+
+```{r, eval=FALSE}
+library(RSQLite)
+
+# Create an SQLite database and save connection in db_cities object
+db_cities <- dbConnect(drv = SQLite(), dbname = "QueryTest.sqlite")
+
+# read in the AQS codes table for city names
+aqs_cities <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/CityNamesByState.csv",
+                       stringsAsFactors = FALSE, skip = 1)
+
+# replace . with _ in table names--otherwise you will not be able to use field names
+names(aqs_cities) <- sub("\\.", "_", names(aqs_cities))
+
+# make a Cities table in the database
+dbWriteTable(db_cities, "Cities", aqs_cities)
+
+# send a query to the database for cities in Illinois
+query <- dbSendQuery(db_cities, "SELECT * FROM Cities WHERE State_Name = 'Illinois'")
+
+# get a data frame of cities in Illinois
+illinois_cities <- dbFetch(query)
+
+head(illinois_cities)
+
+```
+
+```{r, echo=FALSE}
+illinois_cities
+```
+
+Disconnect from the datbase and delete the database from your working directory.
+
+```{r, eval=FALSE}
+dbDisconnect(db_cities)
+unlink("QueryTest.sqlite")
+```
