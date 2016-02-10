@@ -25,7 +25,7 @@ It also covers the following advanced topics:
 
 - [What does `%in%` do?](#in)
 
-- [Pipes](#pipes)
+- [dplyr and databases](#databases)
 
 
 In the folder we provided you will also find a printed version of the RStudio
@@ -232,7 +232,7 @@ left. The output vector is `TRUE` for letters that are in the vector on the righ
 and `FALSE` for the letters that are not in the vector on the right.
 
 
-### Pipes {#pipes}
+### `dplyr` and Databases {#databases}
 
 `dplyr` takes advantage of the pipe operator, `%>%`. This operator allows you 
 to string `dplyr` functions together, without having to assign intermediate data
