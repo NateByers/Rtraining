@@ -1,44 +1,47 @@
 ---
-title: 'Data Manipulation Part 2: dplyr and tidyr'
-output: html_document
+title: 'Data Manipulation: Part 2'
+output: 
+  html_document: 
+    theme: readable
 ---
 
-This tutorial will cover the following functions from `dplyr` and `tidyr`:
+This tutorial will cover the following functions in the `dplyr` package:
 
 - [mutate() and transmute()](#mutate)
-- [gather()](#gather)
-- [spread()](#spread)
-- [summarise_each() and mutate_each()](#each)
+
+- [group_by() with filter()](#groupfilter)
+
+- [group_by() with summarize()](#groupsum)
 
 Advanced topics
 
-- [`dplyr` and databases](#databases)
+- [Piping with %>%](#pipe)
 
-# Window functions with mutate() and transmute(){#mutate}
+## Make new columns with mutate() and transmute() {#mutate}
 
-In the first <a href="http://rpubs.com/NateByers/datamanip1" target="_blank">Data Manipulation</a> tutorial we 
-learned how to use the `group_by()` and `summarise()` functions to aggregate data. 
-Those functions are useful in situations where you need to summarise data based on 
-other columns, such as daily summaries for each site and pollutant in a data set. 
-
-But in some cases we may want a new value for each record in a data frame. For example, 
+In the first <a href="http://rpubs.com/NateByers/DataManip1" target="_blank">Data Manipulation</a> tutorial we learned how to select just the columns we need by using the `select()`
+function from `dplyr`. But in some cases we may want to add a new column. For example, 
 in the `chicago_air` data set from the `region5air` package, we may want a column 
-that is a one day lag value of the ozone column.
+that is a one day lag value of the ozone column. To add a new column we use the 
+`mutate()` function from the `dplyr` package. Again, the first parameter is
+the data frame. Then we use the `lag()` function to create a new column of lagged
+ozone values.
 
 ```{r, warning=FALSE, message=FALSE}
 library(region5air)
 library(dplyr)
 data(chicago_air)
-head(chicago_air, 3)
+head(chicago_air)
 d <- mutate(chicago_air, ozone_lag1 = lag(ozone, n = 1))
 head(d, 3)
 ```
 
-Or we may want to calculate the difference betwen the ozone value and a standard value.
+Or we may want to calculate the difference betwen the ozone value and a standard 
+value.
 
 ```{r}
 d <- mutate(d, diff_standard = ozone - 0.075)
-head(d, 3)
+head(d)
 ```
 
 `transmute()` works the same as `mutate()` except that it only returns the new columns.
@@ -46,126 +49,43 @@ head(d, 3)
 ```{r}
 d <- transmute(chicago_air, ozone_lag1 = lag(ozone, n = 1), 
                diff_standard = ozone - 0.075)
-head(d, 3)
+head(d)
 ```
 
 You can keep a column by including it as a parameter.
 
 ```{r}
 d <- transmute(chicago_air, date, ozone, lag1 = lag(ozone, n= 1))
-head(d, 3)
+head(d)
 ```
 
-# Reshaping with gather(){#gather}
+## Filter by groups with group_by() and filter()
 
-Often we have data in a format that is not convenient for a certain purpose. For instance,
-we may look at the `chicago_air` data set
 
 ```{r}
-head(chicago_air)
+pollutants <- read.table(header=T, text='
+  day   month  duration    value                 
+    1    June        1h    0.050
+    1    June        8h    0.040
+    2    June        1h    0.060
+    2    June        8h    0.050
+    1    July        1h    0.055
+    1    July        8h    0.045
+    2    July        1h    0.065
+    2    July        8h    0.052
+                       ')
+
 ```
 
-and wish that we could have one column with all the values and one column with all of the parameter names. The current format would be called wide, because it has the parameters
-spread out as columns. Since we want to gather those column names into one column, we use
-the `gather()` function in the `tidyr` package.
+### When should you use filter() and when should you use summarise()?
 
-```{r, message=FALSE, warning=FALSE}
-library(tidyr)
-d <- gather(chicago_air, key = parameter, value = daily_value, ozone:solar)
-head(d, 3)
-unique(d$parameter)
-```
+- __Use `filter()`__ with `group_by()` when you want to keep all of the columns
+but only the rows that meet a logical criteria among groups.
 
-The first paramter of the `gather()` function is the data frame, the second parameter
-is the name that you want the factor to have (in our case, we're calling it `parameter`), 
-the third parameter is the name of the column where you will be placing the original
-values (we specified that these are daily values for each record), 
-and the fourth parameter specifies which columns will be gathered.
-
-One reason to reshape data in this way is to make it easier to feed into a plotting
-function such as `ggplot()`.
-
-```{r, message=FALSE, warning=FALSE}
-library(ggplot2)
-d$date <- as.Date(d$date)
-p <- ggplot(d, aes(date, daily_value)) 
-p + geom_point() + facet_grid(parameter ~., scales = "free")
-```
-
-# Reshape with spread(){#spread}
-
-We may also wish that we could reshape data that is long into a wide format. The `airdata` dataset 
-in the `region5air` package is in a long format.
-
-```{r}
-data(airdata)
-airdata$parameter <- factor(airdata$parameter, levels = c(44201, 88101, 62101),
-                            labels = c("ozone", "pm2.5", "temp"))
-sites <- unique(airdata$site)
-airdata$site <- factor(airdata$site, sites, labels = LETTERS[1:length(sites)])
-head(select(airdata, site, datetime, poc, parameter, value), 3)
-unique(airdata$parameter)
-```
-
-It might be more convenient to have this dataset in the format that `chicago_air` is in. To spread out
-the parameter column, we use the `spread()` function from the `tidyr` package.
-
-```{r}
-# clean up airdata--take the mean of multiple POCs
-airdata_wide <- group_by(airdata, site, datetime, parameter)
-airdata_wide <- summarise(airdata_wide, value = mean(value))
-
-airdata_wide <- spread(airdata_wide, key = parameter, value = value)
-head(airdata_wide, 3)
-```
-
-This gives a value for each site/datetime. If we wanted a separate column for
-each pollutant/site, we could create a pollutant/site column.
-
-```{r}
-airdata_wide <- transmute(airdata, parameter_site = paste(parameter, site, sep = "_"),
-                     datetime, value)
-airdata_wide <- spread(airdata_wide, key = parameter_site, value = value)
-head(select(airdata_wide, datetime, ozone_A:ozone_E), 3)
-names(airdata_wide)
-```
-
-# Summarize and mutate multiple columns with summarise_each() and mutate_each() {#each}
-
-`dplyr` also has functions that correspond to `summarise()` and `mutate()`
-that will apply a summary or mutation function to many columns, not just one. 
-For example, instead of using `summarise` to calculate a daily value for each
-parameter by typing a new column for each parameter, we can apply one function to 
-all of the columns.
-
-First we make a `date` column.
-
-```{r}
-airdata_wide$date <- substr(airdata_wide$datetime, 1, 8)
-```
-
-Then we group by date.
-
-```{r}
-d <- group_by(airdata_wide, date)
-```
-
-Now, instead of typing `summarize(d, ozone_A_mean = mean(ozone_A), ozone_B_mean = mean(ozone_B), ...)` we can just use `summarize_each()`.
-
-```{r}
-d <- summarise_each(d, funs(mean), -(datetime))
-head(select(d, date:ozone_E), 3)
-```
-
-Or, if we want to replace each value of a data frame with a transformation of each
-value, we use `mutate_each()`.
-
-```{r}
-d <- mutate_each(select(d, contains("ozone")), funs(. - 0.075))
-head(select(d, ozone_A:ozone_E))
-```
+- __Use `summarize()`__ with `group_by()` when you need a summary of one column
+for each group. You will only get the columns you grouped-by and the one column
+you summarized.
 
 # Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/datamanip2exercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
-material.
+Go to the <a href="http://rpubs.com/NateByers/DataManip2Exercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
