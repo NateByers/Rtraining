@@ -96,14 +96,40 @@ mean_params <- summarize(airdata, mean_value = mean(value, na.rm = TRUE))
 
 #### Solution 4{#ex4}
 
+Without pipes, this is how we would do it.
+
+```{r}
+# subset down to ozone
+ozone <- filter(airdata, parameter == "44201")
+
+# group ozone by site and datetime
+ozone <- group_by(ozone, site, datetime)
+
+# replace the value column with the mean value for each monitor at a datetime
+# --taking the mean when there are multiple pocs
+ozone <- summarize(ozone, value = mean(value, na.rm = TRUE))
+
+# create a year column so you can group by year
+ozone <- mutate(ozone, year = substr(datetime, start = 1, stop = 2))
+
+# group now on site and year
+ozone <- group_by(ozone, site, year)
+
+# filter down to the fourth highest value when the value column
+# is ranked in descending order per site and year
+ozone_4rth_high <- filter(ozone, row_number(desc(value)) == 4)
+```
+
+Here are the same operations with pipes.
+
 ```{r}
 ozone_4rth_high <- airdata %>%
   filter(parameter == "44201") %>%
-  group_by(site, poc, datetime) %>%
+  group_by(site, datetime) %>%
   summarize(value = mean(value, na.rm = TRUE)) %>%
   mutate(year = substr(datetime, 1, 4)) %>%
   group_by(site, year) %>%
-  filter(rank(value, ties.method = "max") == 4)
+  filter(row_number(desc(value)) == 4)
 ```
 
 
