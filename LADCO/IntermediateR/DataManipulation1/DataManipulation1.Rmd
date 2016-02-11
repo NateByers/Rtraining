@@ -179,7 +179,7 @@ Operator | Description
 !=	| not equal to
 x \| y |	x OR y
 x & y	| x AND y
-x %in% y | compare consecutive elements of x to every element of y
+x %in% y | compare consecutive elements of x to all elements of y
 
 
 ## Additional comments on `dplyr` 
@@ -197,7 +197,7 @@ with databases</a>.
 ## Exercises
 
 Exercises for this tutorial can be found here: 
-<a href="http://rpubs.com/NateByers/datamanip1exercises" target="_blank">
+<a href="http://rpubs.com/NateByers/DataManip1Exercises" target="_blank">
 http://rpubs.com/NateByers/datamanip1exercises</a>.
 
 -------------------
@@ -234,7 +234,69 @@ and `FALSE` for the letters that are not in the vector on the right.
 
 ### `dplyr` and Databases {#databases}
 
-`dplyr` takes advantage of the pipe operator, `%>%`. This operator allows you 
-to string `dplyr` functions together, without having to assign intermediate data
-frames. For example, let's say that we wanted to select 
+You can use `dplyr` functions directly on databases. The functions will actually
+translate what you are doing in R to an SQL statement and pass that statement to 
+the database. This is convenient if you have a large database and small RAM. Instead
+of pulling a large amount of data into RAM and then subsetting it, you can subset
+in the database itself and only pull a smaller amount of data into R. 
 
+`dplyr` has built-in support for SQLite, MySQL, MariaDB, and PostgreSQL. Let's build
+another simple SQLite database for demonstration.
+
+```{r, eval=FALSE}
+# get the Cities table from the AQS codes site and replace . with _ in names
+cities <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/CityNamesByState.csv",
+                   skip = 1, stringsAsFactors = FALSE)
+names(cities) <- sub("\\.", "_", names(cities))
+head(cities)
+```
+
+```{r, echo=FALSE}
+load("data.rda")
+head(cities)
+```
+
+```{r, message=FALSE}
+# how big is this thing?
+object.size(cities)
+
+library(RSQLite)
+
+# create an SQLite database and save connection in db_cities object
+db_cities <- dbConnect(drv = SQLite(), dbname = "dplyrTest.sqlite")
+
+# load the Cities table
+dbWriteTable(db_cities, "Cities", cities)
+```
+
+Now we make a `dplyr` connection to the database and the Cities table.
+
+```{r}
+# dplyr database connection
+dplyr_db <- src_sqlite("dplyrTest.sqlite")
+
+# dplyr table connection
+cities_tbl <- tbl(dplyr_db, "Cities")
+```
+
+Now we'll filter down to Michigan cities by using the `dplyr` function `filter()`.
+
+```{r}
+mich_cities <- filter(cities_tbl, State_Name == "Michigan")
+head(mich_cities)
+```
+
+Let's see how much space this object reqires.
+
+```{r}
+object.size(mich_cities)
+```
+
+Now we'll remove the `dplyr` connections, disconnect from the database, and the
+database from our working directory.
+
+```{r}
+rm(dplyr_db, cities_tbl)
+dbDisconnect(db_cities)
+unlink("dplyrTest.sqlite")
+```
