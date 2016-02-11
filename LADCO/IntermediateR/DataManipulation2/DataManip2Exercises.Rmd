@@ -1,0 +1,111 @@
+---
+title: "Data Manipulation"
+output: 
+  html_document: 
+    theme: readable
+---
+
+These exercises accompany the Data Manipulation Part 2 tutorial: 
+<a href="http://rpubs.com/NateByers/DataManip2" target="_blank">
+http://rpubs.com/NateByers/DataManip2</a>. These exercises use data frames
+from the `region5air` library. Run the following code to clean out your global
+environment and load the data you need:
+
+```{r, message=FALSE}
+rm(list = ls())
+library(dplyr)
+library(region5air)
+data(airdata)
+data(chicago_air)
+```
+
+## Exercises {#ex}
+
+1. Use the `mutate()` function to add a column named "violation" to the 
+`chicago_air` dataset that indicates when the ozone value was above 0.070 ppm. 
+__Hint__: you will make the new column using a single equal sign, `violation =`.
+The value you want is a logical comparison: `violation =` ozone values greater 
+than 0.07.
+
+[Solution 1](#ex1)
+
+2. Use the `group_by()` function to group the `airdata` data frame by site, 
+parameter, and duration. Then use `filter()` to make a data frame called `max_params`
+with maximum values maximum values for each monitor/parameter/duration combination.
+__Hint__: in `filter()` you will use `value ==`. You want to keep numbers in the
+"value" column that equal the maximum for each group (`max()`, and don't forget
+`na.rm = TRUE`).
+
+[Solution 2](#ex2)
+
+3. In exercise 2 we grouped the `airdata` data frame by site, parameter, and
+duration. Use `summarize()` to create a data frame called `mean_params` with 
+mean values for each monitor/parameter/duration combination. __Hint__: you will
+use a single `=` symbol, `mean_value =`. You want to use the `mean()` function on 
+numbers in the "value"" column for each group (don't forget `na.rm = TRUE`).
+
+[Solution 3](#ex3)
+
+----------------------------------
+
+#### Advanced Exercise
+
+4. Use the pipe, `%>%`, to string together this series of `dplyr` operations: 
+subset `airdata` down to ozone (44201); group by site, datetime, and poc; use
+`summarize` to find the mean value for each site/datetime combination; and filter
+down to the top 4 values for each year. *Note*: this data set only
+has 1 hour values. This exercise would make more sense with 8 hour data, for
+comparison to the NAAQS.
+
+[Solution 4](#ex4)
+
+
+
+
+--------------------------------------
+
+## Solutions
+
+#### Solution 1{#ex1}
+
+```{r}
+chicago_air <- mutate(chicago_air, violation = ozone > 0.070)
+head(chicago_air)
+```
+
+[Back to exercises](#ex)
+
+#### Solution 2{#ex2}
+
+```{r}
+airdata <- group_by(airdata, site, parameter, duration)
+
+max_params <- filter(airdata, value == max(value, na.rm = TRUE))
+```
+
+
+[Back to exercises](#ex)
+
+#### Solution 3{#ex3}
+
+```{r}
+mean_params <- summarize(airdata, mean_value = mean(value, na.rm = TRUE))
+```
+
+[Back to exercises](#ex)
+
+#### Solution 4{#ex4}
+
+```{r}
+ozone_4rth_high <- airdata %>%
+  filter(parameter == "44201") %>%
+  group_by(site, poc, datetime) %>%
+  summarize(value = mean(value, na.rm = TRUE)) %>%
+  mutate(year = substr(datetime, 1, 4)) %>%
+  group_by(site, year) %>%
+  filter(rank(value, ties.method = "max") == 4)
+```
+
+
+[Back to exercises](#ex)
+
