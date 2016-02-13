@@ -7,7 +7,7 @@ output:
 
 These exercises accompany the Maps in R tutorial: 
 <a href="http://rpubs.com/NateByers/Maps" target="_blank">
-http://rpubs.com/NateByers/Maps</a>. These exercises use daily No2 data for the
+http://rpubs.com/NateByers/Maps</a>. These exercises use daily No~2~ data for the
 United States in 2014. Run the following code to clean out your global
 environment and load the data you need:
 
@@ -18,29 +18,49 @@ library(region5air)
 data(no2_2014)
 ```
 
-To see where this data came from, see the [Download](#download) section below.
+If you are curious about  where this data came from, see the [Download](#download)
+section below.
 
 ## Exercises {#ex}
 
-
+1. Use `dplyr` to create a data frame called `no2_max`. It should be a filtered
+subset of the `no2_2014` data frame so that each monitor has one record with 
+the highest 1-hour NO~2~ maximum for the entire year. __Hint:__ Take a look at 
+the column names, `names(no2_2014)`. Use `group_by()` to group by state, county,
+and site. Use `filter()` to find which 1st-max-value is equal to the maximum of
+the 1st-max-value column (use `==`).
 
 [Solution 1](#ex1)
 
+2. Make a map of NO~2~ monitors. Use `map(database = 'usa')` to make a map of the
+US first. Then use `points()` to add the monitors from the `no2_max` data frame.
 
 
 [Solution 2](#ex2)
 
-
+3. Use `filter()` to make a new data frame of NO~2~ motors that had a 1 hour max
+value above 100 ppb. Call the new data frame `no2_violations` and map those monitors.
 
 [Solution 3](#ex3)
+
+4. Use the `leaflet` package to make an interactive map of the monitors in the
+`no2_violations` data frame.
+
+
+
+[Solution 4](#ex4)
 
 ----------------------------------
 
 #### Advanced Exercise
 
+5. Use the `choroplethr` package to make a heat map of the number of NO~2~ 
+monitors in each state. __Hint:__ You will need to make a new data frame called
+`no2_monitors`. Start with the `no2_2014` data frame and group by state. Use the
+`summarize()` function to get the total number of monitors in each group. The `n()`
+function will count the total number of rows in a group.
 
-
-[Solution 4](#ex4)
+[Solution 5](#ex5)
 
 
 
@@ -51,17 +71,47 @@ To see where this data came from, see the [Download](#download) section below.
 
 #### Solution 1{#ex1}
 
+Here are the columns.
+
+```{r}
+names(no2_2014)
+```
+
+Now we know the column names for state, county, and site. Let's group by those
+columns.
+
+```{r}
+no2_max <- group_by(no2_2014, State.Name, County.Name, Site.Num)
+```
+
+Now we'll filter the data frame so that the "X1st.Max.Value" is equivalent to
+the maximum for each group.
+
+```{r}
+no2_max <- filter(no2_max, X1st.Max.Value == max(X1st.Max.Value, na.rm = TRUE))
+```
+
 
 [Back to exercises](#ex)
 
 #### Solution 2{#ex2}
 
-
+```{r, message=FALSE, warning=FALSE}
+library(maps)
+map(database = 'usa')
+points(x = no2_max$Longitude, y = no2_max$Latitude, pch = 19)
+```
 
 [Back to exercises](#ex)
 
 #### Solution 3{#ex3}
 
+```{r}
+no2_violations <- filter(no2_max, X1st.Max.Value > 100)
+map(database = 'usa')
+points(x = no2_violations$Longitude, y = no2_violations$Latitude, pch = 19,
+       col = "red")
+```
 
 
 [Back to exercises](#ex)
@@ -69,6 +119,56 @@ To see where this data came from, see the [Download](#download) section below.
 #### Solution 4{#ex4}
 
 
+```{r}
+library(leaflet)
+m <- leaflet()
+m <- addTiles(m)
+m <- addMarkers(m, lng=no2_violations$Longitude, lat=no2_violations$Latitude, 
+                popup=no2_violations$CBSA.Name)
+m
+```
+
+
+[Back to exercises](#ex)
+
+#### Solution 5{#ex5}
+
+```{r}
+no2_monitors <- group_by(no2_max, State.Name)
+no2_monitors <- summarize(no2_monitors, value = n())
+```
+
+The `choroplethr` package wants full state names with lower case. So we need to
+remove Puerto Rico, turn the state values to all lower case, and rename the state
+column to "region"
+
+```{r}
+no2_monitors <- filter(no2_monitors, State.Name != "Puerto Rico")
+no2_monitors <- mutate(no2_monitors, State.Name = tolower(State.Name))
+no2_monitors <- rename(no2_monitors, region = State.Name)
+```
+
+Now we can make the map.
+
+```{r, message=FALSE, warning=FALSE}
+library(choroplethr)
+no2_map <- state_choropleth(no2_monitors, legend = "NO2 Monitors")
+no2_map
+```
+
+Just for fun, let's see that with pipes.
+
+```{r, warning=FALSE, message=FALSE}
+no2_map_piped <- no2_max %>%
+  group_by(State.Name) %>%
+  summarize(value = n()) %>%
+  filter(State.Name != "Puerto Rico") %>%
+  mutate(State.Name = tolower(State.Name)) %>%
+  rename(region = State.Name) %>%
+  state_choropleth(legend = "NO2 Monitors")
+
+no2_map_piped
+```
 
 [Back to exercises](#ex)
 

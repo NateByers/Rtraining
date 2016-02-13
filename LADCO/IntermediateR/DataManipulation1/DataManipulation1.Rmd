@@ -6,7 +6,7 @@ output:
 ---
 
 This tutorial introduces the `dplyr` package for general purpose data manipulation.
-`dplyr` is written by <a href="http://had.co.nz/">Hadley Wickham</a> and can be
+`dplyr` is written by <a href="http://had.co.nz/" target="_blank">Hadley Wickham</a> and can be
 installed from CRAN using the `install.packages()` function. The GitHub page for
 the project is found here: 
 <a href="https://github.com/hadley/dplyr" target="_blank">

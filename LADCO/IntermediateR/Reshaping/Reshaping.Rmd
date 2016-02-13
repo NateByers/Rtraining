@@ -1,0 +1,123 @@
+---
+title: "Reshaping Data"
+output: 
+  html_document: 
+    theme: readable
+---
+
+This tutorial introduces the `tidyr` package for reshaping data in R.
+`tidyr` is written by <a href="http://had.co.nz/" target="_blank">Hadley Wickham</a>
+and can be installed from CRAN using the `install.packages()` function. The GitHub
+page for the project is found here: 
+<a href="https://github.com/hadley/tidyr" target="_blank">
+https://github.com/hadley/tidyr</a>. 
+
+This tutorial will cover the following topics about the `tidyr` package:
+
+- [Reshaping with gather()](#gather)
+
+- [Reshaping with spread()](#spread)
+
+- [How to recognize long and wide formats](#recognize)
+
+## Reshaping with gather(){#gather}
+
+Often we have data in a format that is not convenient for a certain purpose. Below
+is an example of a data frame that is in a wide format. This data frame contains
+made up data for 8 hour maximum values in parts per million from 4 different monitors
+over 4 consecutive days.
+
+```{r}
+ozone_wide <- read.table(header=T, text='
+  day  monitor1  monitor2   monitor3  monitor4               
+    1     0.029     0.040      0.010     0.032
+    2     0.025     0.050      0.015     0.041
+    3     0.030     0.045      0.012     0.040
+    4     0.031     0.052      0.019     0.041
+                       ')
+```
+
+Now suppose we wanted to plot this data frame using the `ggplot2` package. In the
+wide format, we can only plot one column at a time.
+
+```{r}
+library(ggplot2)
+
+ggplot(ozone_wide, aes(day, monitor1)) + geom_line()
+```
+
+We could easily plot all of the values from each monitor in a `ggplot2` graph if 
+all of the values were stacked in one column. Again, right now the data frame is
+_wide_. We want the values to be all in one column, a _long_ format. We want to
+gather the monitor columns in, so we use the `tidyr` function called `gather()`. 
+
+```{r}
+library(tidyr)
+ozone_long <- gather(ozone_wide, key = "monitor", value = "ppm", monitor1:monitor4)
+ozone_long
+```
+
+The first parameter is the data frame (just like every function in `dplyr`). The
+second parameter is the name we want to give to the column that will contain all 
+of the monitor column names in the `ozone_wide` data frame. The second parameter
+is the name we want to give to the column that will have all of the numeric values.
+The last parameter specifies what columns we want to gather. The colon means that
+we want to gather the "monitor1" column, the "monitor4" column, and all of the 
+columns in between.
+
+Now we can easily plot all of the values.
+
+```{r}
+ggplot(ozone_long, aes(day, ppm, color = monitor)) + geom_line()
+```
+
+## Reshaping with spread() {#spread}
+
+Of course, if you have a data frame in a long format you may actually want it in 
+a wide format. In this case, you have all of your values stacked in one long
+column and you want to spread those values out. We use the `spread()` function
+from `tidyr` to do this. In this example we simply take the long data frame we 
+just created and reshape it back into a wide format.
+
+```{r}
+spread(ozone_long, key = "monitor", value = "ppm")
+```
+
+The parameters are the same as `gather()`, except we don't have to supply the 
+columns we want to create--that information is contained within the `key`. 
+
+
+## How to recognize long and wide formats {#recognize}
+
+It may be difficult to figure out what shape your data is in. The best way to figure
+out the shape of a data frame is to determine if there is a natural key or not.
+A natural key is a column in your data frame that uniquely represents each row
+in the data frame and does not repeat. If your data frame has a column that is a 
+natural key, then your data is in a wide format. If your data frame doesn't have
+a natural key, it's in a long format.
+
+Let's look at `ozone_wide`.
+
+```{r}
+ozone_wide
+```
+
+"day" is a column that uniquely identifies each row of the data frame and doesn't
+repeat. There is a single day 1, a single day 2, etc.
+
+`ozone_long` doesn't have a column that is a natural key.
+
+```{r}
+ozone_long
+```
+
+Each day is repeated several times.
+
+Wide formats are easy to identify and easy to reshape to a long format. Long
+formats are more difficult to identify and more difficult to reshape. You must
+recognize that there is no key, and you must figure out which column _should_ be 
+the key.
+
+## Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/ReshapingExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.

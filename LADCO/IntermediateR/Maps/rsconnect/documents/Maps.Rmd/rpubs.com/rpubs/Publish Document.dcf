@@ -1,0 +1,7 @@
+name: Publish Document
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/152529/f3fc0158face41da98f0b6b655dee2b4
+bundleId: https://api.rpubs.com/api/v1/document/152529/f3fc0158face41da98f0b6b655dee2b4
+url: http://rpubs.com/NateByers/152529
+when: 1455383989.01115

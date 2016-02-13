@@ -139,7 +139,7 @@ m
 
 ## Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/MapExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
+Go to the <a href="http://rpubs.com/NateByers/MapsExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
 
 ---------------------------------------------
 
