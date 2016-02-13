@@ -1,5 +1,5 @@
 ---
-title: "Data Manipulation"
+title: "Data Manipulation 2: Exercises"
 output: 
   html_document: 
     theme: readable
