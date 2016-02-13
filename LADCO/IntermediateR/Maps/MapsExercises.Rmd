@@ -1,0 +1,100 @@
+---
+title: "Maps in R: Exercises"
+output: 
+  html_document: 
+    theme: readable
+---
+
+These exercises accompany the Maps in R tutorial: 
+<a href="http://rpubs.com/NateByers/Maps" target="_blank">
+http://rpubs.com/NateByers/Maps</a>. These exercises use daily No2 data for the
+United States in 2014. Run the following code to clean out your global
+environment and load the data you need:
+
+```{r, message=FALSE}
+rm(list = ls())
+library(dplyr)
+library(region5air)
+data(no2_2014)
+```
+
+To see where this data came from, see the [Download](#download) section below.
+
+## Exercises {#ex}
+
+
+
+[Solution 1](#ex1)
+
+
+
+[Solution 2](#ex2)
+
+
+
+[Solution 3](#ex3)
+
+----------------------------------
+
+#### Advanced Exercise
+
+
+
+[Solution 4](#ex4)
+
+
+
+
+--------------------------------------
+
+## Solutions
+
+#### Solution 1{#ex1}
+
+
+[Back to exercises](#ex)
+
+#### Solution 2{#ex2}
+
+
+
+[Back to exercises](#ex)
+
+#### Solution 3{#ex3}
+
+
+
+[Back to exercises](#ex)
+
+#### Solution 4{#ex4}
+
+
+
+[Back to exercises](#ex)
+
+## Download {#download}
+
+Below is the code for retrieving the `no2_2014` data frame from the 
+<a href="http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/download_files.html" target="_blank">
+EPA website</a>.
+
+```{r, eval=FALSE}
+# create a temporary file
+temp <- tempfile()
+
+# download the .zip file to a temporary file--this might take a minute or two
+download.file('http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/daily_42602_2014.zip', temp)
+
+# unzip temporary file to your working directory
+unzip(temp)
+
+# delete the temporary file
+unlink(temp)
+
+# read the data into R
+no2 <- read.csv('daily_42602_2014.csv', stringsAsFactors = FALSE)
+
+# delete the .csv file from your working directory
+unlink('daily_42602_2014.csv')
+```
+
