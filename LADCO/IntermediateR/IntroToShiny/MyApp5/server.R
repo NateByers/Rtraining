@@ -1,5 +1,6 @@
 library(ggplot2)
 library(leaflet)
+library(plotly)
 
 chicago_air <- read.csv(text = '
                         "date","ozone","temp","solar","month","weekday"
@@ -374,9 +375,9 @@ chicago_air$date <- as.Date(chicago_air$date)
 # Define server logic required to plot the time series
 shinyServer(function(input, output) {
   
-  output$timePlot <- renderPlot({
-    ggplot(chicago_air, aes_string("date", input$parameter)) + geom_line() 
-
+  output$timePlot <- renderPlotly({
+    g <- ggplot(chicago_air, aes_string("date", input$parameter)) + geom_point()
+    ggplotly(g)
   })
   
   output$dataTable <- renderDataTable({

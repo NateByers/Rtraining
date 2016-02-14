@@ -4,15 +4,16 @@ resource_files:
 - MyApp/ui.R
 - MyApp/server.R
 runtime: shiny
-output: html_document
+output: 
+  html_document: 
+    theme: readable
 ---
 
 Shiny is an <a href="http://shiny.rstudio.com/" target="_blank">R package by 
-RStudio<a/> that enables you to create interactive graphs. RStudio has a <a 
-href="http://shiny.rstudio.com/tutorial/" target="_blank">great tutorial</a> for 
-building and deploying Shiny apps. This tutorial won't assume that you've already 
-familiar with Shiny, but it's a good idea to utilize RStudio's resources on their 
-website.
+RStudio<a/> that enables you to create interactive tables and graphs. RStudio has 
+a <a href="http://shiny.rstudio.com/tutorial/" target="_blank">great tutorial</a> for 
+building and deploying Shiny apps. This tutorial will get you started, but the
+best place to learn about Shiny is the RStudio website.
 
 ## Basics
 
@@ -23,8 +24,10 @@ To make a Shiny app you need to have two `.R` scripts in the same folder:
 
 ## ui.R
 
-The `ui.R` script determines the layout and look of your app. Let's look at the 
-`ui.R` for the __Hello Shiny__ example from the RStudio tutorial:
+The `ui.R` script determines the layout of your app. Let's look at the 
+`ui.R` for the 
+<a href="http://shiny.rstudio.com/tutorial/lesson1/" target="_blank">Hello Shiny</a>
+example from the RStudio tutorial:
 
 ```{r, eval=FALSE}
 library(shiny)
@@ -109,6 +112,8 @@ shinyAppDir(
 
 We'll make a simple app using the the `chicago_air` dataset. 
 
+__ui.R__
+
 ```{r, eval=FALSE}
 library(shiny)
 
@@ -121,11 +126,11 @@ shinyUI(fluidPage(
   # Sidebar with a dropdown for selecting parameter
   sidebarLayout(
     sidebarPanel(
-      selectInput("parameter",
-                  "Select Parameter:",
-                  "Ozone" = "ozone",
-                  "Temperature" = "temp",
-                  "Solar Radiation" = "solar")
+      selectInput(inputId = "parameter",
+                  label = "Select Parameter:",
+                  choices = c("Ozone" = "ozone",
+                              "Temperature" = "temp",
+                              "Solar Radiation" = "solar"))
     ),
 
     # Show a plot of the time series
@@ -136,8 +141,9 @@ shinyUI(fluidPage(
 ))
 ```
 
-```{r, eval=FALSE}
+__server.R__
 
+```{r, eval=FALSE}
 library(shiny)
 library(region5air)
 data(chicago_air)
@@ -152,9 +158,11 @@ shinyServer(function(input, output) {
 })
 ```
 
-If we have the `ui.R` and `server.R` scripts in a folder called `ChicagoApp` in our working directory, then we would run the app with
+If we have the `ui.R` and `server.R` scripts in a folder called `ChicagoApp` in 
+our working directory, then we could run the app with
 
 ```{r, eval=FALSE}
+library(shiny)
 runApp("ChicagoApp")
 ```
 
@@ -167,7 +175,6 @@ shinyAppDir(
 )
 ```
 
-# Exercises
+## Exercises
 
-Go to the <a href="https://natebyers.shinyapps.io/ShinyExercises/" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
-material.
+Go to the <a href="https://natebyers.shinyapps.io/ShinyExercises/" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.

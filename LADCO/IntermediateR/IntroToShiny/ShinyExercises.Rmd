@@ -7,8 +7,8 @@ resource_files:
 - MyApp2/ui.R
 - MyApp3/server.R
 - MyApp3/ui.R
-- MyApp4/server.R
-- MyApp4/ui.R
+- MyApp5/server.R
+- MyApp5/ui.R
 runtime: shiny
 output: html_document
 ---
@@ -25,21 +25,34 @@ tutorial in that folder. Use `runApp()` to open the application.
 
 [Solution](#ex1)
 
-2. Add a table of the data to the bottom of the application. Use
-`dataTableOutput()` in the `ui.R` script and `renderDataTable()`
-in the `server.r` script.
+----------------------------------
+
+#### Advanced Exercise
+
+2. Add a table of the data to the bottom of the application. Use `dataTableOutput()`
+in the `ui.R` script and `renderDataTable()` in the `server.r` script. See 
+<a href="http://shiny.rstudio.com/articles/datatables.html" target="_blank">this 
+page</a> for explanation of what DataTables are, and see 
+<a href="http://shiny.rstudio.com/gallery/basic-datatable.html" target="_blank">
+this page</a> for a live example of how to use these functions in a Shiny app.
+
 
 [Solution](#ex2)
 
 3. Add a Leaflet map to the application with a marker at the location 
-of the monitor (latitude 42.14 and longitude -87.79923).
+of the monitor (latitude 42.14 and longitude -87.79923). See
+<a href="https://rstudio.github.io/leaflet/shiny.html" target="_blank">this page
+</a> for a demonstration of how to put a Leaflet map in a Shiny app. Remember to
+library the `leaflet` package in your `ui.R` and `server.R` scripts.
 
 [Solution](#ex3)
 
-4. Replace the `ggplot2` graph with a time series graph from the
-`dygraphs` package. See the 
-<a href="http://www.htmlwidgets.org/showcase_dygraphs.html" target="_blank">htmlwidgets
-page</a>.
+4. Modify the `ggplot2` output with the `plotly` package. See the 
+<a href="https://plot.ly/r/" target="_blank">project website</a> for more information
+on `plotly`. See 
+<a href="https://plot.ly/r/shiny-tutorial/" target="_blank">the documentation</a>
+on how to use the `ggplotly()` function in a Shiny app. And change `geom_line()` 
+to `geom_point()` for a cleaner image.
 
 [Solution](#ex4)
 
@@ -64,7 +77,8 @@ shinyAppDir(
 
 ### Solution 2 {#ex2}
 
-`ui.R`
+__ui.R__
+
 ```{r, eval=FALSE}
 library(shiny)
 
@@ -79,9 +93,9 @@ shinyUI(fluidPage(
     sidebarPanel(
       selectInput("parameter",
                   "Select Parameter:",
-                  "Ozone" = "ozone",
+                  c("Ozone" = "ozone",
                   "Temperature" = "temp",
-                  "Solar Radiation" = "solar")
+                  "Solar Radiation" = "solar"))
     ),
 
     # Show a plot of the time series
@@ -93,7 +107,7 @@ shinyUI(fluidPage(
 ))
 ```
 
-`server.R`
+__server.R__
 
 ```{r, eval=FALSE}
 
@@ -133,7 +147,7 @@ shinyAppDir(
 
 ### Solution 3 {#ex3}
 
-`ui.R`
+__ui.R__
 
 ```{r, eval=FALSE}
 library(shiny)
@@ -151,9 +165,9 @@ shinyUI(fluidPage(
       leafletOutput("mymap"),
       selectInput("parameter",
                   "Select Parameter:",
-                  "Ozone" = "ozone",
+                  c("Ozone" = "ozone",
                   "Temperature" = "temp",
-                  "Solar Radiation" = "solar")
+                  "Solar Radiation" = "solar"))
     ),
 
     # Show a plot of the time series
@@ -165,7 +179,7 @@ shinyUI(fluidPage(
 ))
 ```
 
-`server.R`
+__server.R__
 
 ```{r, eval=FALSE}
 
@@ -214,12 +228,12 @@ shinyAppDir(
 
 ### Solution 4 {#ex4}
 
-`ui.R`
+__ui.R__
 
 ```{r, eval=FALSE}
 library(shiny)
 library(leaflet)
-library(dygraphs)
+library(plotly)
 
 # Define UI for application that plots time series
 shinyUI(fluidPage(
@@ -233,40 +247,35 @@ shinyUI(fluidPage(
       leafletOutput("mymap"),
       selectInput("parameter",
                   "Select Parameter:",
-                  "Ozone" = "ozone",
+                  c("Ozone" = "ozone",
                   "Temperature" = "temp",
-                  "Solar Radiation" = "solar")
+                  "Solar Radiation" = "solar"))
     ),
 
     # Show a plot of the time series
     mainPanel(
-      plotOutput("dygraph"),
+      plotlyOutput("timePlot"),
       dataTableOutput("dataTable")
     )
   )
 ))
 ```
 
-`server.R`
+__server.R__
 
 ```{r, eval=FALSE}
-
 library(shiny)
 library(region5air)
 library(leaflet)
-library(dygraphs)
-library(dplyr)
-library(xts)
-data(chicago_air)
-chicago_dy <- chicago_air[, c("ozone", "temp", "solar")]
-rownames(chicago_dy) <- chicago_air$date
+library(ggplot2)
+library(plotly)
 
-  # Define server logic required to plot the time series
-shinyServer(function(input, output) {
-  
-  output$dygraph <- renderDygraph({
-    dy <- as.xts(select_(chicago_dy, input$parameter))
-    dygraph(dy)
+data(chicago_air)
+chicago_air$date <- as.Date(chicago_air$date)
+
+output$timePlot <- renderPlotly({
+    g <- ggplot(chicago_air, aes_string("date", input$parameter)) + geom_point()
+    ggplotly(g)
   })
   
   output$dataTable <- renderDataTable({
@@ -280,7 +289,6 @@ shinyServer(function(input, output) {
     m <- addMarkers(m, lng=-87.79923, lat=42.14)
     setView(m, lng=-87.79923, lat=42.14, zoom = 10)
   })
-})
 ```
 
 ```{r, eval=FALSE}
@@ -289,7 +297,7 @@ runApp("ChicagoApp")
 
 ```{r, echo=FALSE}
 shinyAppDir(
-  "MyApp4",
+  "MyApp5",
   options=list(
     width="100%", height=1600
   )
