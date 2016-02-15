@@ -5,16 +5,17 @@ if(file.exists("install_packages.R")){
   unlink("install_packages.R")
 }  
 
-cat("library(", file = "install_pacakges.R", sep = "\n")
-cat("c(", file = "install_pacakges.R", append = TRUE)
-cat("'", packages[1], "'", file = "install_pacakges.R", sep = "", append = TRUE)
+cat("install.packages(", file = "install_packages.R", sep = "\n")
+cat("c(", file = "install_packages.R", append = TRUE)
+cat("'", packages[1], "'", file = "install_packages.R", sep = "", append = TRUE)
 for(i in 2:length(packages)){
-  cat(", '", packages[i], "'", file = "install_pacakges.R", sep = "", append = TRUE)
+  cat(", '", packages[i], "'", file = "install_packages.R", sep = "", append = TRUE)
 }
-cat("))", file = "install_pacakges.R", sep = "", append = TRUE)
+cat("), repos = 'http://cran.us.r-project.org');", file = "install_packages.R", sep = "", append = TRUE)
+cat("\nlibrary(devtools);", file = "install_packages.R", sep = "", append = TRUE)
 
-install_raqdm <- "\ndevtools::install_github('FluentData/raqdm@dev')"
-install_region5air <- "\ndevtools::install_github('NateByers/region5air')"
+install_raqdm <- "\ninstall_github('FluentData/raqdm@dev', auth_token = NULL);"
+install_region5air <- "\ninstall_github('NateByers/region5air', auth_token = NULL)"
 
-cat(install_raqdm, file = "install_pacakges.R", sep = "", append = TRUE)
-cat(install_region5air, file = "install_pacakges.R", sep = "", append = TRUE)
+cat(install_raqdm, file = "install_packages.R", sep = "", append = TRUE)
+cat(install_region5air, file = "install_packages.R", sep = "", append = TRUE)
