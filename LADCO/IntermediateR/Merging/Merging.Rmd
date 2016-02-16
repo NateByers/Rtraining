@@ -1,100 +1,37 @@
 ---
-title: "Merging"
-output: html_document
+title: "Merging in R"
+output: 
+  html_document: 
+    theme: readable
 ---
 
-This turial will cover how to merge data frames using base R and `dplyr`. 
+This tutorial will cover how to merge data frames using `dplyr`. 
 
-- [Base R `merge()`](#base)
-- [Merging with `dplyr`](#dplyr)
-- [Filtering joins with `dplyr`](#filter)
+- [Mutating joins](#mutate)
 
-We will be using AQS tables to merge with a summarized version of the `airdata` dataset
-from the `region5air` package.
+- [Filtering joins](#filter)
 
-First, we create year and state columns in `airdata` and then we make a summary
-table of the yearly mean for each site/parameter.
+- [A note on keys](#keys)
 
-```{r, message=FALSE, warning=FALSE}
-library(region5air)
-library(dplyr)
+Advanced topic:
 
-data(airdata)
-airdata$year <- substr(airdata$datetime, start = 1, stop = 4)
-airdata$state <- substr(airdata$site, start = 4, stop = 5)
-air <- group_by(airdata, site, state, year, parameter, unit)
-air <- summarise(air, mean = mean(value, na.rm = TRUE))
-air
-```
+- [Joining database tables with dplyr](#database)
 
-Then we get the state and county AQS table by reading it directly into R using
-the url on EPA's website.
+## Mutating joins {#mutate}
 
-```{r, eval=FALSE}
-aqs_states <- read.csv("https://aqs.epa.gov/aqsweb/codes/data/StateCountyCodes.csv",
-                       skip = 1, stringsAsFactors = FALSE)
-head(aqs_states)
-```
+`dplyr` contains joining functions that enable you to combine two data frames
+into one. These functions mimic database joins. If you aren't familiar with database 
+joins, <a href="http://www.sql-join.com/" target="_blank">this site</a> has a good
+overview.
 
-```{r, echo=FALSE}
-aqs_states <- read.csv("states.csv", stringsAsFactors = FALSE)
-head(aqs_states)
-```
-
-# Merging in base R {#base}
-
-Merging two data frames can be accomplished in base R using the `merge()` function. 
-To merge, there must be one or more columns that the two tables have in common. If we 
-wanted to merge the `air` dataset and the `aqs_states` table, we can see that the common
-columns are "state" and "State.Code" respectively.
-
-The first two arguments of the `merge()` function are the two data frames to be merged. 
-If there are column names that are the same in the two data frames, then the default 
-behavior is to the merge on those column names, and no other parameter is required.
-
-As an example, let's make a copy of the `aqs_states` table and change the `State.Code`
-name to `state`.
-
-```{r}
-b_states <- aqs_states
-names(b_states)[names(b_states) == "State.Code"] <- "state"
-```
-
-Now we can merge by using just the two data frames as arguments.
-
-```{r}
-b <- merge(air, b_states)
-as.tbl(b)
-```
-
-If there are no common names, then we must use the `by.x` and `by.y` parameters. 
-
-```{r}
-b <- merge(air, aqs_states, by.x = "state", by.y = "State.Code")
-as.tbl(b)
-```
-
-The default operation of `merge()` is an inner join. This means that, in columns that
-are shared among the two data frames, only records that match will be kept. In the example
-above, only states with the state codes in the `aqs_states` data frame that were also in
-the "state" column of the `air` data frame were kept.
-
-```{r}
-unique(air$state)
-unique(aqs_states$State.Code)
-unique(b$state)
-```
-
-You can also specify a left join or a right join if you would like to keep all of the
-records from one of the data frames. To more easily see how this works, we'll create two
-small data frames.
+We'll use two simple data frames to demonstrate how joins work.
 
 ```{r}
 monitors <- read.table(header=T, text='
   monitorid        lat       long                 
-          1  42.467573 -87.810047     
-          2  42.049148 -88.273029
-          3  39.110539 -90.324080
+          1  42.467573  -87.810047     
+          2  42.049148  -88.273029
+          3  39.110539  -90.324080
                        ')
 
 pollutants <- read.table(header=T, text='
@@ -103,82 +40,128 @@ pollutants <- read.table(header=T, text='
         so2         1h            1
       ozone         8h            2
         no2         1h            4
-                       ')
+                         ')
 ```
 
-An inner join would keep only the monitors that are in common, which are 1 and 2.
+To merge two data frames, there must be one or more columns that are in both data
+frames. If we look at the `monitors` data frame and the `pollutants` data frame, 
+we can see that they both have a "monitorid" column. That's the column we would
+merge on, and in this tutorial we will refer to it as the "key".  
 
-```{r}
-merge(pollutants, monitors)
+Below is a list of merging functions in `dplyr` that combine two data frames into
+one, also referred to as mutating joins.
+
+#### `inner_join()` 
+
+This function combines the columns from both data frames, but only keeps rows where 
+the value in the key column matches in both data frames. Below we do an inner 
+join on our two data frames.
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+
+inner_join(pollutants, monitors, by = "monitorid")
 ```
 
 Note that there is only one record for monitor 1 in the `monitors` data frame,
-but the information for that monitor is repeated in the output because there is more
-than one monitor id with the value 1 in the `pollutants` data frame.
+but the information for that monitor is repeated in the output because there is
+more than one monitor id with the value 1 in the `pollutants` data frame.
+
+#### `left_join()`
 
 If we wanted to keep all of the pollutant information, even if there wasn't a 
-corresponding record in the `monitors` data frame, then we could do a left join
-by using the `all.x` parameter.
+corresponding record in the `monitors` data frame, then we could use the 
+`left_join()` function.
 
 ```{r}
-merge(pollutants, monitors, all.x = TRUE)
+left_join(pollutants, monitors, by = "monitorid")
 ```
 
-We can also keep all records from both data frames, which is called a full join. We
-use the `all` parameter.
+#### `full_join()`
+
+We can also keep all records from both data frames using the `full_join()` 
+function.
+
 
 ```{r}
-merge(pollutants, monitors, all = TRUE)
+full_join(pollutants, monitors, by = "monitorid")
 ```
 
-# Merging with `dplyr` {#dplyr}
 
-The `dplyr` package has functions that can do all of the operations that `merge()` can.
-Similar to `merge()`, the functions in `dplyr` have you specify which colums to merge on,
-or it merges on any column names that are in common. However, there is only one `by` parameter.
-
-```{r}
-b <- inner_join(air, aqs_states, by = c("state" = "State.Code"))
-head(b)
-```
-
-- `inner_join` Merge records that have shared values in the columns being merged on.
-
-```{r}
-inner_join(pollutants, monitors)
-```
-
-- `left_join` Keep all records in the first data frame.
-
-```{r}
-left_join(pollutants, monitors)
-```
-
-- `full_join` Keep all records in both data frames.
-
-```{r}
-full_join(pollutants, monitors)
-```
-
-# Filtering joins with `dplyr`{#filter}
+## Filtering joins with `dplyr`{#filter}
 
 Sometimes we would like to subset, or filter, a data frame based on the contents of
-another data frame. Suppose we wanted to keep the `pollutants` data frame in the same
+another data frame. In this kind of task we aren't combining two data frames, so
+it's not a mutating join. We are filtering, so these are called filtering joins.
+
+#### `semi_join()`
+
+Suppose we wanted to keep the `pollutants` data frame in the same
 format, but only keep the records that also have a match in the `monitors` data
-frame. We can use the `semi_join()` function from the `dplyr` package.
+frame. We can use the `semi_join()` function to filter the `pollutants` data
+frame.
 
 ```{r}
-semi_join(pollutants, monitors)
+semi_join(pollutants, monitors, by = "monitorid")
 ```
 
-We may also want to know what records are in a data frame that do _not_ match the records
-in another data frame. Suppose we want to know which monitors from the `monitors` data
-frame that are not also in the `pollutants` data frame. We can use the `anti_join` function.
+#### `anti_join()`
+
+We may also want to know what records are in a data frame that do _not_ match the
+records in another data frame. Suppose we want to know which monitors from the 
+`monitors` data frame that are not also in the `pollutants` data frame. We can use
+the `anti_join()` function.
 
 ```{r}
-anti_join(monitors, pollutants)
+anti_join(monitors, pollutants, by = "monitorid")
 ```
 
-# Exercises
+## A note on keys {#keys}
 
-Go to the <a href="http://rpubs.com/NateByers/mergingexercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
+The `dplyr` merging functions will merge two data frames on multiple columns with
+differing names. Below we create two data frames for illustration.
+
+```{r}
+sites <- read.table(header=T, text='
+  state   site         lat       long                 
+     IL      1   42.467573  -87.810047     
+     IL      2   42.049148  -88.273029
+     IN      1   41.68140   -87.49473
+                       ')
+
+parameters <- read.table(header=T, text='
+  region   monitor   parameter   duration                     
+      IL         1       ozone         1h
+      IN         1         so2         1h            
+      IL         2       ozone         8h            
+      IL         2         no2         1h            
+                         ')
+
+```
+
+These two data frames can only be merged if we join on two keys, the column with
+state information and the column with site information. Those two columns have
+different names in the two data frames. We can do a full join of these two data 
+frames if we supply the names of the keys in the `by` parameter. 
+
+```{r}
+full_join(sites, parameters, by = c("state" = "region", "site" = "monitor"))
+```
+
+## Exercises
+
+Go to the <a href="http://rpubs.com/NateByers/MergingExercises" target="_blank">
+exercises page</a> for this tutorial and test your comprehension of the material.
+
+--------------------------------------------------
+
+## Advanced Topic
+
+### Joining database tables with `dplyr` {#database}
+
+In <a href="http://rpubs.com/NateByers/DataManip1" target="_blank">another 
+tutorial</a> we learned how to access a database table and manipulate it using
+`dplyr` functions. You can also join two database tables within the database 
+itself using `dplyr` functions. The functions translate the operation you want to
+perform into a SQL expression. Then the expression gets passed to the database and
+the result is returned to your R environment in a data-frame-like object.
