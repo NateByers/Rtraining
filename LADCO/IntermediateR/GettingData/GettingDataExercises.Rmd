@@ -1,22 +1,25 @@
 ---
 title: 'Getting Data: Exercises'
-output: 
-  html_document: 
+output:
+  pdf_document: default
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 ## Exercises {#ex}
 
 These exercises accompany the Getting Data tutorial: 
-<a href="http://rpubs.com/NateByers/gettingData" target="_blank">
-http://rpubs.com/NateByers/gettingData</a>. 
+<a href="http://rpubs.com/NateByers/GettingData" target="_blank">
+http://rpubs.com/NateByers/GettingData</a>. 
 
 1. To use the `raqdm` package you must have a user name and password from EPA.
-Register for an account here: <a href="https://aqs.epa.gov/api" target="_blank">
-https://aqs.epa.gov/api</a>. Assuming you had a user name and account, write
-R code that would request ozone data from all Illinois monitors between April 1 and
-September 30, 2015. For a list of parameter and state codes, go to the AQS codes
-website: <a href="http://www.epa.gov/aqs/aqs-code-list" target="_blank">
+If you don't have a user name and pass word, you can register for an account here: 
+<a href="https://aqs.epa.gov/api" target="_blank"> https://aqs.epa.gov/api</a>.
+Assuming you had a user name and account, write R code that would request ozone 
+data from all Illinois monitors between June 1 and September 30, 2015. For a list
+of parameter and state codes, go to the AQS codes website: 
+<a href="http://www.epa.gov/aqs/aqs-code-list" target="_blank">
 http://www.epa.gov/aqs/aqs-code-list</a>.
 
 [Solution 1](#ex1)
@@ -56,7 +59,7 @@ First, library the package and set your user name and password if you have not
 done so.
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 library(raqdm)
-setAQDMuser(user = "me@email.com", pw = "secret", save = TRUE)
+setAQDMuser(user = "me@email.com", password = "secret", save = TRUE)
 ```
 
 On the AQS codes website we can find the number for Illinois (17) and the number
@@ -64,7 +67,7 @@ for ozone (44201). So we send a request using the `getAQDMdata()` function, assi
 the `synchronous` parameter a value of `FALSE`.
 
 ```{r, eval=FALSE}
-ozone_req <- getAQDMdata(state = "17", bdate = "20150401", edate = "20150930", 
+ozone_req <- getAQDMdata(state = "17", bdate = "20150601", edate = "20150930", 
                          param = "44201", synchronous = FALSE)
 ```
 
@@ -148,7 +151,7 @@ names(aqs_units) <- sub("\\.", "_", names(aqs_units))
 
 Create the database in your working directory and load the two tables.
 
-```{r}
+```{r, message=FALSE}
 library(RSQLite)
 db_par_unit <- dbConnect(SQLite(), "par_unit.sqlite")
 dbWriteTable(db_par_unit, "Parameters", aqs_params)
@@ -174,7 +177,15 @@ head(param_units)
 param_units
 ```
 
-Now we disconnect from the database and delete it.
+Now we clear the query result, disconnect from the database, and delete it.
+
+```{r, eval=FALSE}
+dbClearResult(query)
+```
+
+```{r, echo=FALSE}
+TRUE
+```
 
 ```{r}
 dbDisconnect(db_par_unit)

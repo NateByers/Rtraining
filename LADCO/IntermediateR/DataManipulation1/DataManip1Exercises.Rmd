@@ -1,11 +1,13 @@
 ---
 title: 'Data Manipulation 1: Exercises'
-output: 
-  html_document: 
+output:
+  pdf_document: default
+  html_document:
     theme: readable
+  word_document: default
 ---
 
-These exercises accompany the Data Manipulation Part 1 tutorial: 
+This document accompanies the Data Manipulation Part 1 tutorial: 
 <a href="http://rpubs.com/NateByers/DataManip1" target="_blank">
 http://rpubs.com/NateByers/DataManip1</a>. These exercises use data frames
 from the `region5air` library. Run the following code to clean out your global

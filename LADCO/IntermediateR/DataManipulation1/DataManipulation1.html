@@ -115,14 +115,14 @@ $(document).ready(function () {
 <p>This tutorial introduces the <code>dplyr</code> package for general purpose data manipulation. <code>dplyr</code> is written by <a href="http://had.co.nz/" target="_blank">Hadley Wickham</a> and can be installed from CRAN using the <code>install.packages()</code> function. The GitHub page for the project is found here: <a href="https://github.com/hadley/dplyr" target="_blank"> https://github.com/hadley/dplyr</a>. It makes processing data frames easier and quicker.</p>
 <p>This tutorial will cover the following functions in the <code>dplyr</code> package:</p>
 <ul>
-<li><p><a href="#select">select()</a>, selecting columns</p></li>
-<li><p><a href="#arrange">arrange()</a>, reordering rows</p></li>
-<li><p><a href="#filter">filter()</a>, filtering rows</p></li>
+<li><p><a href="#select"><code>select()</code></a>, selecting columns</p></li>
+<li><p><a href="#arrange"><code>arrange()</code></a>, reordering rows</p></li>
+<li><p><a href="#filter"><code>filter()</code></a>, filtering rows</p></li>
 </ul>
 <p>It also covers the following advanced topics:</p>
 <ul>
 <li><p><a href="#in">What does <code>%in%</code> do?</a></p></li>
-<li><p><a href="#databases">dplyr and databases</a></p></li>
+<li><p><a href="#databases"><code>dplyr</code> and databases</a></p></li>
 </ul>
 <p>In the folder we provided you will also find a printed version of the RStudio cheatsheet for data wrangling found here: <a href="https://www.rstudio.com/resources/cheatsheets/" target="_blank"> https://www.rstudio.com/resources/cheatsheets/</a>. All of the functions from <code>dplyr</code> that we cover in this course can be found on that cheatsheet.</p>
 <p>The data we will be using for demonstrations in this tutorial can be found in the <code>region5air</code> package. That package is not on CRAN, but can be found on GitHub: <a href="https://github.com/NateByers/region5air" target="_blank">https://github.com/NateByers/region5air</a>. If you have not installed this package, below is code that will install it using the <code>install_github()</code> function from the <code>devtools</code> package.</p>
@@ -140,8 +140,8 @@ head(airdata)</code></pre>
 ## 5 840171110001           0          10 20141231T0100-0600     44201
 ## 6 840170971007           0          10 20141231T0100-0600     44201</code></pre>
 <p>For information about this data set, type <code>?airdata</code>.</p>
-<div id="select" class="section level2">
-<h2>Select columns with select()</h2>
+<div id="select-columns-with-select" class="section level2">
+<h2>Select columns with <code id="select">select()</code></h2>
 <p>Using base R functions, if we wanted to select a few columns from <code>airdata</code>, we would need to either use numbers or names inside of the <code>[ , ]</code> function. In <code>dplyr</code> we simply use the <code>select()</code> function.</p>
 <p>As with all <code>dplyr</code> functions, the first parameter is the data frame that you want to perform the operation on. In our case we want to select a few columns from the <code>airdata</code> data frame, so it will look something like this: <code>select(airdata, ...)</code>. But what are the column names? We use the <code>names</code> function to find out.</p>
 <pre class="r"><code>names(airdata)</code></pre>
@@ -161,7 +161,7 @@ head(d)</code></pre>
 ## 5 840171110001 20141231T0100-0600     44201 0.023
 ## 6 840170971007 20141231T0100-0600     44201 0.026</code></pre>
 <p>As with all <code>dplyr</code> functions, the output is always a data frame (or data-frame- like) object.</p>
-<p>You can also select consective columns by separating the first column and the last column with a colon. We’ve seen this before. We can use the colon to create a consecute series of integers.</p>
+<p>You can also select consecutive columns by separating the first column and the last column with a colon. We’ve seen this before. We can use the colon to create a consecutive series of integers.</p>
 <pre class="r"><code>1:3</code></pre>
 <pre><code>## [1] 1 2 3</code></pre>
 <p>We can use that short hand to select the first three columns of a data frame.</p>
@@ -185,16 +185,40 @@ head(d)</code></pre>
 ## 5 840171110001 20141231T0100-0600     44201       60         0 0.023
 ## 6 840170971007 20141231T0100-0600     44201       60         0 0.026</code></pre>
 </div>
-<div id="arrange" class="section level2">
-<h2>Arrange rows with arrange()</h2>
-<p>In <code>dplyr</code> ordering a data frame is very easy. We use the <code>arrange()</code> function. As always, the data frame is the first parameter. Then we provide the columns by which to arrange the data frame. If we wanted to arrange<code>airdata</code> by first ordering the rows by parameter (pollutant/weather variable) and then by site, we would do this.</p>
-<pre class="r"><code>airdata &lt;- arrange(airdata, parameter, site)</code></pre>
+<div id="arrange-rows-with-arrange" class="section level2">
+<h2>Arrange rows with <code id="arrange">arrange()</code></h2>
+<p>In <code>dplyr</code> ordering a data frame is very easy. We use the <code>arrange()</code> function. As always, the data frame is the first parameter. Then we provide the columns by which to arrange the data frame. If we wanted to arrange<code>airdata</code> by first ordering the rows by “site” and then by datetime, we would do this:</p>
+<pre class="r"><code>head(airdata)</code></pre>
+<pre><code>##           site data_status action_code           datetime parameter
+## 1 840170890005           0          10 20141231T0100-0600     44201
+## 2 840170311601           0          10 20141231T0100-0600     44201
+## 3 840170314002           0          10 20141231T0100-0600     44201
+## 4 840170310001           0          10 20141231T0100-0600     44201
+## 5 840171110001           0          10 20141231T0100-0600     44201
+## 6 840170971007           0          10 20141231T0100-0600     44201</code></pre>
+<pre class="r"><code>airdata &lt;- arrange(airdata, site, datetime)
+head(airdata)</code></pre>
+<pre><code>##           site data_status action_code           datetime parameter
+## 1 840170310001           0          10 20130403T1400-0600     44201
+## 2 840170310001           0          10 20130403T1500-0600     44201
+## 3 840170310001           0          10 20130403T1600-0600     44201
+## 4 840170310001           0          10 20130403T1700-0600     44201
+## 5 840170310001           0          10 20130403T1800-0600     44201
+## 6 840170310001           0          10 20130403T1900-0600     44201</code></pre>
 <p>Again, the output of a <code>dplyr</code> function is always some modified version of the data frame that you supplied in the first parameter.</p>
 <p>If we wanted to arrange the data frame by descending order, we simply wrap the column with the <code>desc()</code> function.</p>
-<pre class="r"><code>airdata &lt;- arrange(airdata, desc(parameter), datetime)</code></pre>
+<pre class="r"><code>airdata &lt;- arrange(airdata, desc(site), datetime)
+head(airdata)</code></pre>
+<pre><code>##           site data_status action_code           datetime parameter
+## 1 840550590025           0          10 20130513T1300-0600     44201
+## 2 840550590025           0          10 20130513T1400-0600     44201
+## 3 840550590025           0          10 20130513T1500-0600     44201
+## 4 840550590025           0          10 20130513T1600-0600     44201
+## 5 840550590025           0          10 20130513T1700-0600     44201
+## 6 840550590025           0          10 20130513T1800-0600     44201</code></pre>
 </div>
-<div id="filter" class="section level2">
-<h2>Filter rows with filter()</h2>
+<div id="filter-rows-with-filter" class="section level2">
+<h2>Filter rows with <code id="filter">filter()</code></h2>
 <p>To filter a data frame we need to use a logical vector. For example, if we wanted to filter <code>airdata</code> by pollutant and POC, we would do something like this in base R.</p>
 <pre class="r"><code>b &lt;- airdata[airdata$parameter  == 44201 &amp; airdata$poc == 1, ]
 
@@ -206,7 +230,7 @@ dim(b)</code></pre>
 <pre class="r"><code>d &lt;- filter(airdata, parameter == 44201, poc == 1)
 dim(d)</code></pre>
 <pre><code>## [1] 260911     20</code></pre>
-<p>If you want to use two logical comparisons and combine them with an OR, you must use the <code>|</code> symbol. Suppose we want to subset down to all records with parameter 6201 and with a poc of 1 <em>or</em> 2.</p>
+<p>If you want to use two logical comparisons and combine them with an OR, you must use the <code>|</code> symbol. Suppose we want to subset down to all records with parameter 6201 and with a POC of 1 <em>or</em> 2.</p>
 <pre class="r"><code>d &lt;- filter(airdata, parameter == 44201, poc == 1 | poc == 2)
 dim(d)</code></pre>
 <pre><code>## [1] 284665     20</code></pre>
@@ -278,7 +302,7 @@ dim(d)</code></pre>
 <p><code>%in%</code> is one of the more difficult logical operators to understand, but it’s extremely useful. Here’s a demonstration:</p>
 <pre class="r"><code>c(&quot;b&quot;, &quot;c&quot;, &quot;z&quot;) %in% c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;)</code></pre>
 <pre><code>## [1]  TRUE  TRUE FALSE</code></pre>
-<p>The operator takes the first element of the vector on the left and checks to see if the element is in the vector on the right. Since “b” is in the vector on the right, the first value of the returned vector is <code>TRUE</code>. “c” is also in the vector on the right, so the second value in the returned vector is <code>TRUE</code>. But “z” is not in the vector on the right. The third value is <code>FALSE</code>, and the length of the returned vector equals the length of the vector on the left, with is 3.</p>
+<p>The operator takes the first element of the vector on the left and checks to see if the element is in the vector on the right. Since “b” is in the vector on the right, the first value of the returned vector is <code>TRUE</code>. “c” is also in the vector on the right, so the second value in the returned vector is <code>TRUE</code>. But “z” is not in the vector on the right. The third value is <code>FALSE</code>, and the length of the returned vector equals the length of the vector on the left, which is 3.</p>
 <p>Now let’s switch the vectors around.</p>
 <pre class="r"><code>c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;) %in% c(&quot;b&quot;, &quot;c&quot;, &quot;z&quot;)</code></pre>
 <pre><code>## [1] FALSE  TRUE  TRUE FALSE FALSE FALSE</code></pre>
@@ -313,10 +337,9 @@ dbWriteTable(db_cities, &quot;Cities&quot;, cities)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>Now we make a <code>dplyr</code> connection to the database and the Cities table.</p>
 <pre class="r"><code># dplyr database connection
-dplyr_db &lt;- src_sqlite(&quot;dplyrTest.sqlite&quot;)</code></pre>
-<pre><code>## Warning: dbGetInfo is deprecated: please use individual metadata functions
-## instead</code></pre>
-<pre class="r"><code># dplyr table connection
+dplyr_db &lt;- src_sqlite(&quot;dplyrTest.sqlite&quot;)
+
+# dplyr table connection
 cities_tbl &lt;- tbl(dplyr_db, &quot;Cities&quot;)</code></pre>
 <p>Now we’ll filter down to Michigan cities by using the <code>dplyr</code> function <code>filter()</code>.</p>
 <pre class="r"><code>mich_cities &lt;- filter(cities_tbl, State_Name == &quot;Michigan&quot;)
@@ -328,9 +351,9 @@ head(mich_cities)</code></pre>
 ## 4   Michigan         26       700     Akron         157     Tuscola
 ## 5   Michigan         26       860   Alanson          47       Emmet
 ## 6   Michigan         26       980    Albion          25     Calhoun</code></pre>
-<p>Let’s see how much space this object reqires.</p>
+<p>Let’s see how much space this object requires.</p>
 <pre class="r"><code>object.size(mich_cities)</code></pre>
-<pre><code>## 5576 bytes</code></pre>
+<pre><code>## 5912 bytes</code></pre>
 <p>Now we’ll remove the <code>dplyr</code> connections, disconnect from the database, and the database from our working directory.</p>
 <pre class="r"><code>rm(dplyr_db, cities_tbl)
 dbDisconnect(db_cities)</code></pre>
