@@ -3,6 +3,7 @@ title: 'Data Manipulation: Part 1'
 output:
   html_document:
     theme: readable
+  pdf_document: default
   word_document: default
 ---
 
@@ -16,11 +17,11 @@ quicker.
 
 This tutorial will cover the following functions in the `dplyr` package:
 
-- [`select()`](#select), selecting columns
+- [`select()`](#select)
 
-- [`arrange()`](#arrange), reordering rows
+- [`arrange()`](#arrange)
 
-- [`filter()`](#filter), filtering rows
+- [`filter()`](#filter)
 
 It also covers the following advanced topics:
 
