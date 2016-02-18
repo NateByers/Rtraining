@@ -10,9 +10,10 @@ output:
 ---
 
 Shiny is an <a href="http://shiny.rstudio.com/" target="_blank">R package by 
-RStudio<a/> that enables you to create interactive tables and graphs. RStudio has 
-a <a href="http://shiny.rstudio.com/tutorial/" target="_blank">great tutorial</a> for 
-building and deploying Shiny apps. This tutorial will get you started, but the
+RStudio<a/> that enables you to create web applications with interactive tables 
+and graphs. RStudio has a 
+<a href="http://shiny.rstudio.com/tutorial/" target="_blank">great tutorial</a> 
+on building and deploying Shiny apps. This tutorial will get you started, but the
 best place to learn about Shiny is the RStudio website.
 
 ## Basics
@@ -146,6 +147,7 @@ __server.R__
 ```{r, eval=FALSE}
 library(shiny)
 library(region5air)
+library(ggplot2)
 data(chicago_air)
 chicago_air$date <- as.Date(chicago_air$date)
 

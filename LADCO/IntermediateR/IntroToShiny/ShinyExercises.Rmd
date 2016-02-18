@@ -1,5 +1,5 @@
 ---
-title: "Intro To Shiny"
+title: "Intro To Shiny: Exercises"
 resource_files:
 - MyApp/ui.R
 - MyApp/server.R
@@ -13,11 +13,13 @@ runtime: shiny
 output: html_document
 ---
 
-## Exercises {#ex}
+
 
 These exercises accompany the 
 <a href="https://natebyers.shinyapps.io/IntroToShiny" target="_blank">Intro to 
 Shiny</a> tutorial. 
+
+## Exercises {#ex}
 
 1. If you have not already, create a folder called `ChicagoApp` in your
 working directory and place the `ui.R` and `server.R` scripts from the 
@@ -27,10 +29,10 @@ tutorial in that folder. Use `runApp()` to open the application.
 
 ----------------------------------
 
-#### Advanced Exercise
+### Advanced Exercises
 
 2. Add a table of the data to the bottom of the application. Use `dataTableOutput()`
-in the `ui.R` script and `renderDataTable()` in the `server.r` script. See 
+in the `ui.R` script and `renderDataTable()` in the `server.R` script. See 
 <a href="http://shiny.rstudio.com/articles/datatables.html" target="_blank">this 
 page</a> for explanation of what DataTables are, and see 
 <a href="http://shiny.rstudio.com/gallery/basic-datatable.html" target="_blank">
@@ -273,7 +275,9 @@ library(plotly)
 data(chicago_air)
 chicago_air$date <- as.Date(chicago_air$date)
 
-output$timePlot <- renderPlotly({
+shinyServer(function(input, output) {
+  
+  output$timePlot <- renderPlotly({
     g <- ggplot(chicago_air, aes_string("date", input$parameter)) + geom_point()
     ggplotly(g)
   })
@@ -289,6 +293,8 @@ output$timePlot <- renderPlotly({
     m <- addMarkers(m, lng=-87.79923, lat=42.14)
     setView(m, lng=-87.79923, lat=42.14, zoom = 10)
   })
+  
+})
 ```
 
 ```{r, eval=FALSE}

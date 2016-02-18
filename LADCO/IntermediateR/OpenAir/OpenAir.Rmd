@@ -14,17 +14,17 @@ a comprehensive <a href="http://www.openair-project.org/Downloads/OpenAirManual.
 
 This tutorial will cover the following `openair` functions.
 
-- [summaryPlot()](#summary)
+- [`summaryPlot()`](#summary)
 
-- [windRose()](#windrose)
+- [`windRose()`](#windrose)
 
-- [pollutionRose()](#pollutionrose)
+- [`pollutionRose()`](#pollutionrose)
 
-- [timePlot()](#timeplot)
+- [`timePlot()`](#timeplot)
 
-- [calendarPlot()](#calendarplot)
+- [`calendarPlot()`](#calendarplot)
 
-## summaryPlot() {#summary}
+## `summaryPlot()` {#summary}
 
 The first plotting function we'll look at is `summaryPlot()`. Functions in the
 `openair` package expect data frames that are in a certain format. The column with 
@@ -74,7 +74,7 @@ in the data frame. The red bars at the bottom of each panel show where there are
 large segments of missing data. The panels on the right are the histograms of the
 distributions for each parameter.
 
-## windRose() {#windrose}
+## `windRose()` {#windrose}
 
 The `windRose()` function expects a data frame with columns for wind speed and wind 
 direction labeled "ws" and "wd", respectively. Here we load the `chicago_wind` 
@@ -112,7 +112,7 @@ We can split the data frame by time periods by using the `type` argument.
 windRose(chicago_wind, type = "weekday", key.footer = "knots")
 ```
 
-## pollutionRose() {#pollutionrose}
+## `pollutionRose()` {#pollutionrose}
 
 We can make a similar plot that will display pollutant concentrations in relation 
 to wind direction.
@@ -127,7 +127,7 @@ We can also look at the values by time periods.
 pollutionRose(chicago_wind, pollutant = "ozone", type = "month")
 ```
 
-## timePlot() {#timeplot}
+## `timePlot()` {#timeplot}
 
 Time series plots can be easily produced using `timePlot()`
 
@@ -136,7 +136,7 @@ timePlot(chicago_air, pollutant = c("ozone", "temp", "solar"))
 ```
 
 
-## calendarPlot() {#calendarplot}
+## `calendarPlot()` {#calendarplot}
 
 `calendarPlot()` displays daily values in a calendar format.
 
@@ -148,5 +148,6 @@ calendarPlot(chicago_wind, pollutant = "ozone", annotate = "ws")
 
 ## Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/OpenairExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this 
-material.
+Exercises for this tutorial can be found here: 
+<a href="http://rpubs.com/NateByers/OpenairExercises" target="_blank">
+http://rpubs.com/NateByers/OpenairExercises</a>.

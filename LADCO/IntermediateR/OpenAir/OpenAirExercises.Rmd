@@ -64,11 +64,11 @@ and "parameter" columns. Use `summarize()` to replace the "value" column with
 the mean for multiple values per hour/parameter (i.e., for sites with more than
 one poc). Use`tidyr` to reshape the data to a wide format. Make time series plots 
 of the parameters using the `timePlot()` function in `openair`. Be sure to rename
-the columns and format the date column properly.
+the columns and format the date column properly. __Hints:__ Remember to remove
+rows that have an `NA` in the date-time column. Also, the `rename()` function will
+not work on this data frame, so use `names() <- ` instead.
 
 [Solution 5](#ex5)
-
-
 
 
 --------------------------------------
@@ -148,3 +148,4 @@ timePlot(site22_wide, pollutant = c("ozone", "temp", "pm2.5"))
 
 ```
 
+[Back to exercises](#ex)
