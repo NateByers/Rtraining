@@ -1,23 +1,24 @@
 ---
 title: 'Data Manipulation: Part 2'
-output: 
-  html_document: 
+output:
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 This tutorial will cover the following functions in the `dplyr` package:
 
-- [mutate()](#mutate)
+- [`mutate()`](#mutate)
 
-- [group_by() with filter()](#groupfilter)
+- [`group_by()` with `filter()`](#groupfilter)
 
-- [group_by() with summarize()](#groupsum)
+- [`group_by()` with `summarize()`](#groupsum)
 
 Advanced topic
 
-- [Piping with %>%](#pipe)
+- [Piping with `%>%`](#pipe)
 
-## Make new columns with mutate() {#mutate}
+## Make new columns with `mutate()` {#mutate}
 
 In the first <a href="http://rpubs.com/NateByers/DataManip1" target="_blank">Data Manipulation</a> tutorial we learned how to select just the columns we need by using the `select()`
 function from `dplyr`. But in some cases we may want to add a new column. For example, 
@@ -33,7 +34,7 @@ library(dplyr)
 data(chicago_air)
 head(chicago_air)
 d <- mutate(chicago_air, ozone_lag1 = lag(ozone, n = 1))
-head(d, 3)
+head(d)
 ```
 
 We may want to also calculate the difference between the ozone value and a standard 
@@ -45,7 +46,7 @@ head(d)
 ```
 
 
-## Filter by groups with group_by() and filter() {#groupfilter}
+## Filter by groups with `group_by()` and `filter()` {#groupfilter}
 
 So far we have selected columns with `select()`, added new columns with 
 `mutate()`, and filtered an entire data frame with `filter()`.
@@ -55,7 +56,7 @@ once. Suppose we are interested in the high values of ozone in the `chicago_air`
 data frame. We can use the `max()` function to find the highest value.
 
 ```{r}
-max(chicago_air$ozone, na.rm = TRUE)
+filter(chicago_air, ozone == max(ozone, na.rm = TRUE))
 ```
 
 But that's for the entire year. Suppose you wanted to know the maximum value for
@@ -65,7 +66,7 @@ very inefficient. What we really want to do is filter the data frame by first
 grouping all of the rows by month, then filtering on the highest ozone value in 
 each month.
 
-Below, a data frame named `ozone` is created for illustration. It contains ozone
+Below we create a data frame named `ozone` for illustration. It contains ozone
 values for one monitor, but for simplicity's sake it only has two days in June
 and two days in July. 
 
@@ -131,7 +132,7 @@ Now the `filter()` function will return 4 rows, one for each month/duration pair
 filter(ozone_8h_1h, value == max(value))
 ```
 
-## Summarize by groups with group_by() and summarize() {#groupsum}
+## Summarize by groups with `group_by()` and `summarize()` {#groupsum}
 
 Filtering by grouped columns is appropriate for situations where we want to 
 subset down to rows that meet a logical criteria. But sometimes we  want to apply
@@ -148,11 +149,11 @@ summarize(ozone_8h_1h, mean = mean(value))
 ```
 
 As you can see, the column "units" has been dropped. When you use `summarize()`
-you will only keep the columns that have been grouped by and the column you create
+you will only keep the columns that have been grouped-by and the column you create
 with the summarizing function. All other columns are dropped.
 
 
-### When should you use filter() and when should you use summarise()?
+### When should you use `filter()` and when should you use `summarise()`?
 
 - __Use `filter()` with `group_by()`__ when you want to keep only the rows that 
 meet a logical criteria among groups. You will be using `==` because it's a logical 
@@ -165,15 +166,17 @@ the one column you created with the summarizing function.
 
 ## Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/DataManip2Exercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
+Exercises for this tutorial can be found here: 
+<a href="http://rpubs.com/NateByers/DataManip2Exercises" target="_blank">
+http://rpubs.com/NateByers/DataManip2Exercises</a>.
 
 -------------------------------------
 
 ## Advanced Topic
 
-### Piping with %>% {#pipe}
+### Piping with `%>%` {#pipe}
 
-`dplyr` takes advantage of the pipe operator, `%>%, from the `magrittr` package.
+`dplyr` takes advantage of the pipe operator, `%>%`, from the `magrittr` package.
 
 The `%>%` is a symbol you can use to chain `dplyr` functions together. This is 
 convenient because it eliminates the necessity of creating new data frames, or 

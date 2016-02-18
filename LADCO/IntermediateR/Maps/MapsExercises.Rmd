@@ -1,8 +1,9 @@
 ---
-title: "Maps in R: Exercises"
-output: 
-  html_document: 
+title: 'Maps in R: Exercises'
+output:
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 These exercises accompany the Maps in R tutorial: 
@@ -56,7 +57,7 @@ value above 100 ppb. Call the new data frame `no2_violations` and map those moni
 
 5. Use the `choroplethr` package to make a heat map of the number of NO~2~ 
 monitors in each state. __Hint:__ You will need to make a new data frame called
-`no2_monitors`. Start with the `no2_2014` data frame and group by state. Use the
+`no2_monitors`. Start with the `no2_max` data frame and group by state. Use the
 `summarize()` function to get the total number of monitors in each group. The `n()`
 function will count the total number of rows in a group.
 
@@ -185,16 +186,10 @@ temp <- tempfile()
 # download the .zip file to a temporary file--this might take a minute or two
 download.file('http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/daily_42602_2014.zip', temp)
 
-# unzip temporary file to your working directory
-unzip(temp)
+# read the .csv file into R
+no2 <- read.csv(unz(temp, 'daily_42602_2014.csv'), stringsAsFactors = FALSE)
 
 # delete the temporary file
 unlink(temp)
-
-# read the data into R
-no2 <- read.csv('daily_42602_2014.csv', stringsAsFactors = FALSE)
-
-# delete the .csv file from your working directory
-unlink('daily_42602_2014.csv')
 ```
 

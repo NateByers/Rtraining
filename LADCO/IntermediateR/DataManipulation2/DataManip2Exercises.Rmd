@@ -1,8 +1,9 @@
 ---
-title: "Data Manipulation 2: Exercises"
-output: 
-  html_document: 
+title: 'Data Manipulation 2: Exercises'
+output:
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 These exercises accompany the Data Manipulation Part 2 tutorial: 
@@ -31,9 +32,9 @@ than 0.07.
 
 2. Use the `group_by()` function to group the `airdata` data frame by site, 
 parameter, and duration. Then use `filter()` to make a data frame called `max_params`
-with maximum values maximum values for each monitor/parameter/duration combination.
+with maximum values for each monitor/parameter/duration combination.
 __Hint__: in `filter()` you will use `value ==`. You want to keep numbers in the
-"value" column that equal the maximum for each group (`max()`, and don't forget
+"value" column that equal the maximum for each group (use `max()`, and don't forget
 `na.rm = TRUE`).
 
 [Solution 2](#ex2)

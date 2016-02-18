@@ -1,8 +1,10 @@
 ---
 title: "Reshaping Data"
-output: 
-  html_document: 
+output:
+  html_document:
     theme: readable
+  pdf_document: default
+  word_document: default
 ---
 
 This tutorial introduces the `tidyr` package for reshaping data in R.
@@ -14,13 +16,13 @@ https://github.com/hadley/tidyr</a>.
 
 This tutorial will cover the following topics about the `tidyr` package:
 
-- [Reshaping with gather()](#gather)
+- [Reshaping with `gather()`](#gather)
 
-- [Reshaping with spread()](#spread)
+- [Reshaping with `spread()`](#spread)
 
 - [How to recognize long and wide formats](#recognize)
 
-## Reshaping with gather(){#gather}
+## Reshaping with `gather()` {#gather}
 
 Often we have data in a format that is not convenient for a certain purpose. Below
 is an example of a data frame that is in a wide format. This data frame contains
@@ -57,13 +59,12 @@ ozone_long <- gather(ozone_wide, key = "monitor", value = "ppm", monitor1:monito
 ozone_long
 ```
 
-The first parameter is the data frame (just like every function in `dplyr`). The
-second parameter is the name we want to give to the column that will contain all 
-of the monitor column names in the `ozone_wide` data frame. The second parameter
-is the name we want to give to the column that will have all of the numeric values.
-The last parameter specifies what columns we want to gather. The colon means that
-we want to gather the "monitor1" column, the "monitor4" column, and all of the 
-columns in between.
+The first parameter in `gather()` is the data frame (just like every function in
+`dplyr`). The second parameter is the name we want to give to the column that will
+contain all of the monitor column names in the `ozone_wide` data frame. The second
+parameter is the name we want to give to the column that will have all of the numeric values. The last parameter specifies what columns we want to gather. The colon 
+means that we want to gather the "monitor1" column, the "monitor4" column, and all
+of the columns in between.
 
 Now we can easily plot all of the values.
 
@@ -120,4 +121,6 @@ the key.
 
 ## Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/ReshapingExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
+Exercises for this tutorial can be found here: 
+<a href="http://rpubs.com/NateByers/ReshapingExercises" target="_blank">
+http://rpubs.com/NateByers/ReshapingExercises</a>.

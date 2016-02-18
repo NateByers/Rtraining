@@ -130,7 +130,7 @@ data(chicago_air)</code></pre>
 </ol>
 <p><a href="#ex2">Solution 2</a></p>
 <ol start="3" style="list-style-type: decimal">
-<li>Use the <code>filter()</code> function on <code>airdata</code> to create a data frame called <code>pm25</code>. Filter down to parameter “88101”. Use <code>spread()</code> on <code>pm25</code> to make a wide data frame called <code>pm25_wide</code> with separate columns for each site. <strong>Hint:</strong> you want to spread the “site” column, so identify that column as the <code>key</code> in the <code>spread()</code> function.</li>
+<li>Use the <code>filter()</code> function on <code>airdata</code> to create a data frame called <code>pm25</code>. Filter down to parameter “88101”. Use the select() function to select only the “datetime”, “site”, and “value” columns. Use <code>spread()</code> on <code>pm25</code> to make a wide data frame called <code>pm25_wide</code> with separate columns for each site. <strong>Hint:</strong> you want to spread the “site” column, so identify that column as the <code>key</code> in the <code>spread()</code> function.</li>
 </ol>
 <p><a href="#ex3">Solution 3</a></p>
 <hr />

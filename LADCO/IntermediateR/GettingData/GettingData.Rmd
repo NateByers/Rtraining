@@ -37,6 +37,7 @@ Activity  | Description          | Minutes
 ----------|----------------------|------
 Tutorial  | Lecture              | 45
 Lab       | Exercises or review  | 30
+Break     | Free time            | 10
 Questions | Any topic            | 15
 
 ## Expectations

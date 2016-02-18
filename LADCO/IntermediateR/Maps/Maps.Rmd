@@ -1,8 +1,9 @@
 ---
 title: "Maps in R"
-output: 
-  html_document: 
+output:
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 In this tutorial we'll cover the following topics:
@@ -83,7 +84,7 @@ text(x = monitors$long, y = monitors$lat, labels = monitors$name, pos = 2)
 
 ## Heat Maps {#heat}
 
-The `choroplethr` packages makes it fairly easy to create heat maps in R. 
+The `choroplethr` package makes it fairly easy to create heat maps in R. 
 For illustration, here's a simple data frame of the number of nonattainment areas
 for 8-hr ozone (2008 standard) by state in Region 5 
 (<a href="http://www3.epa.gov/airquality/greenbook/hntc.html" target="_blank">reference</a>).
@@ -100,7 +101,7 @@ nonattain <- read.table(header=T, text='
                       ')
 ```
 
-Now we'll use the `choroplethr` package to make a heat map. The `choroplethr()` 
+Now we'll use the `choroplethr` package to make a heat map. The `state_choropleth()` 
 function requires the column with state names to be labeled "region" and the column 
 with the numeric values to be labeled "value". To do this, we'll introduce another 
 handy `dplyr` function, `rename()`.
@@ -111,14 +112,14 @@ library(dplyr)
 nonattain <- rename(nonattain, region = state, value = areas)
 ```
 
-Now we can use the `choroplethr()` function. 
+Now we can use the `state_choropleth()` function. 
 
 ```{r, message = FALSE, warning = FALSE}
 library(choroplethr)
 
 nonattain_map <- state_choropleth(nonattain, zoom = nonattain$region,
-                                  title = "2008 8-hr Ozone Standard",
-                                  legend = "Nonattain Areas")
+                                  title = "2008 8-hr Ozone Nonattainment",
+                                  legend = "Areas")
 nonattain_map
 ```
 
@@ -139,7 +140,8 @@ m
 
 ## Exercises
 
-Go to the <a href="http://rpubs.com/NateByers/MapsExercises" target="_blank">exercises page</a> for this tutorial and test your comprehension of this material.
+Exercises for this tutorial can be found here: <a href="http://rpubs.com/NateByers/MapsExercises" target="_blank">
+http://rpubs.com/NateByers/MapsExercises</a>.
 
 ---------------------------------------------
 
@@ -147,8 +149,7 @@ Go to the <a href="http://rpubs.com/NateByers/MapsExercises" target="_blank">exe
 
 ### Spatial Data {#spatial}
 
-It is possible to perform any kind of geographical analysis you would like in R.
-The `sp` package is the foundational R package for working with spatial data.
+It is possible to perform any kind of geographical analysis in R.
 
 To illustrate how to create spatial data objects in R, let's re-create the simple
 `monitors` data frame, with a small modification:
@@ -174,8 +175,9 @@ mon_WGS84 <- filter(monitors, datum == "WGS84")
 mon_NAD83 <- filter(monitors, datum == "NAD83")
 ```
 
-Now we can create `SpatialPoints` data objects by using the `SpatialPoints()` 
-function. 
+`sp` is the foundational package for working with spatial data in R. Once we 
+library the package we can create `SpatialPoints` data objects by using
+the `SpatialPoints()` function. 
 
 ```{r, message=FALSE, warning=FALSE}
 library(sp)
@@ -207,7 +209,8 @@ plot(mon_NAD83_sp, add = TRUE)
 
 ### Further Reading
 
-Below is a list of resources for learning more about what you can do with R and geographic data.
+Below is a list of resources for learning more about what you can do with 
+geographic data in R.
 
 - For a good introduction to using GIS data in R, see
 <a href="https://cran.r-project.org/doc/contrib/intro-spatial-rl.pdf" target="_blank">this vignette</a>.
@@ -218,7 +221,7 @@ Applied Spatial Data Analysis with R</a>.
 
 - The 
 <a href="https://cran.r-project.org/web/views/Spatial.html" target="_blank"> CRAN Task
-View on Analysis of Spatial Data</a> should be a comprehensive list of R packages
+View on Analysis of Spatial Data</a> is a comprehensive list of R packages
 on CRAN that can be used for spatial analysis.
 
 

@@ -145,7 +145,7 @@ data(no2_2014)</code></pre>
 <div id="advanced-exercise" class="section level4">
 <h4>Advanced Exercise</h4>
 <ol start="5" style="list-style-type: decimal">
-<li>Use the <code>choroplethr</code> package to make a heat map of the number of NO<sub>2</sub> monitors in each state. <strong>Hint:</strong> You will need to make a new data frame called <code>no2_monitors</code>. Start with the <code>no2_2014</code> data frame and group by state. Use the <code>summarize()</code> function to get the total number of monitors in each group. The <code>n()</code> function will count the total number of rows in a group.</li>
+<li>Use the <code>choroplethr</code> package to make a heat map of the number of NO<sub>2</sub> monitors in each state. <strong>Hint:</strong> You will need to make a new data frame called <code>no2_monitors</code>. Start with the <code>no2_max</code> data frame and group by state. Use the <code>summarize()</code> function to get the total number of monitors in each group. The <code>n()</code> function will count the total number of rows in a group.</li>
 </ol>
 <p><a href="#ex5">Solution 5</a></p>
 <hr />
@@ -198,8 +198,8 @@ m &lt;- addTiles(m)
 m &lt;- addMarkers(m, lng=no2_violations$Longitude, lat=no2_violations$Latitude, 
                 popup=no2_violations$CBSA.Name)
 m</code></pre>
-<p><div id="htmlwidget-5269" style="width:672px;height:480px;" class="leaflet"></div>
-<script type="application/json" data-for="htmlwidget-5269">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>"}]},{"method":"addMarkers","args":[[64.84569,33.37005,33.8025,39.838119,39.751184,41.965193,40.85355,40.85355,35.4325],[-147.727413,-112.6207,-118.22,-104.94984,-104.987625,-87.876265,-73.9661,-73.9661,-79.2887],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Fairbanks, AK","Phoenix-Mesa-Scottsdale, AZ","Los Angeles-Long Beach-Santa Ana, CA","Denver-Aurora, CO","Denver-Aurora, CO","Chicago-Naperville-Joliet, IL-IN-WI","New York-Northern New Jersey-Long Island, NY-NJ-PA","New York-Northern New Jersey-Long Island, NY-NJ-PA","Sanford, NC"],null,null]}],"limits":{"lat":[33.37005,64.84569],"lng":[-147.727413,-73.9661]}},"evals":[]}</script></p>
+<p><div id="htmlwidget-5298" style="width:672px;height:480px;" class="leaflet"></div>
+<script type="application/json" data-for="htmlwidget-5298">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>"}]},{"method":"addMarkers","args":[[64.84569,33.37005,33.8025,39.838119,39.751184,41.965193,40.85355,40.85355,35.4325],[-147.727413,-112.6207,-118.22,-104.94984,-104.987625,-87.876265,-73.9661,-73.9661,-79.2887],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Fairbanks, AK","Phoenix-Mesa-Scottsdale, AZ","Los Angeles-Long Beach-Santa Ana, CA","Denver-Aurora, CO","Denver-Aurora, CO","Chicago-Naperville-Joliet, IL-IN-WI","New York-Northern New Jersey-Long Island, NY-NJ-PA","New York-Northern New Jersey-Long Island, NY-NJ-PA","Sanford, NC"],null,null]}],"limits":{"lat":[33.37005,64.84569],"lng":[-147.727413,-73.9661]}},"evals":[]}</script></p>
 <p><a href="#ex">Back to exercises</a></p>
 </div>
 <div id="ex5" class="section level4">
@@ -238,17 +238,11 @@ temp &lt;- tempfile()
 # download the .zip file to a temporary file--this might take a minute or two
 download.file('http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/daily_42602_2014.zip', temp)
 
-# unzip temporary file to your working directory
-unzip(temp)
+# read the .csv file into R
+no2 &lt;- read.csv(unz(temp, 'daily_42602_2014.csv'), stringsAsFactors = FALSE)
 
 # delete the temporary file
-unlink(temp)
-
-# read the data into R
-no2 &lt;- read.csv('daily_42602_2014.csv', stringsAsFactors = FALSE)
-
-# delete the .csv file from your working directory
-unlink('daily_42602_2014.csv')</code></pre>
+unlink(temp)</code></pre>
 </div>
 
 

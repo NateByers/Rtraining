@@ -149,6 +149,11 @@ $(document).ready(function () {
 <td align="left">30</td>
 </tr>
 <tr class="odd">
+<td align="left">Break</td>
+<td align="left">Free time</td>
+<td align="left">10</td>
+</tr>
+<tr class="even">
 <td align="left">Questions</td>
 <td align="left">Any topic</td>
 <td align="left">15</td>
@@ -189,7 +194,7 @@ $(document).ready(function () {
 install_github(&quot;FluentData/raqdm&quot;)
 library(raqdm)</code></pre>
 <p>Once the package is installed and we load it using the <code>library()</code> function, we use a function called <code>setAQDMuser()</code> which will set the username and password for us. If you set <code>save = TRUE</code> then your username and password will be saved for future R sessions.</p>
-<pre class="r"><code>setAQDMuser(user = &quot;me@email.com&quot;, pw = &quot;secret&quot;, save = TRUE)</code></pre>
+<pre class="r"><code>setAQDMuser(user = &quot;me@email.com&quot;, password = &quot;secret&quot;, save = TRUE)</code></pre>
 <p>Once your user information has been saved, you can use the <code>getAQDMdata()</code> function to make a request for a specific data set. Right now, synchronous pulls are not working in the AirData API, so you must set <code>synchronous = FALSE</code>.</p>
 <pre class="r"><code>benz_req &lt;- getAQDMdata(state = &quot;18&quot;, county = &quot;089&quot;, bdate = &quot;20150101&quot;,
                         edate = &quot;20151231&quot;, param = &quot;45201&quot;, synchronous = FALSE)</code></pre>

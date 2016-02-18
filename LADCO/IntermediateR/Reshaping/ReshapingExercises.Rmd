@@ -1,8 +1,9 @@
 ---
 title: 'Reshaping Data: Exercises'
-output: 
-  html_document: 
+output:
+  html_document:
     theme: readable
+  word_document: default
 ---
 
 These exercises accompany the Reshaping Data tutorial: 
@@ -39,7 +40,8 @@ the `value` in the function.
 [Solution 2](#ex2)
 
 3. Use the `filter()` function on `airdata` to create a data frame called `pm25`.
-Filter down to parameter "88101". Use `spread()` on `pm25` to make a wide 
+Filter down to parameter "88101". Use the select() function to select only the 
+“datetime”, “site”, and “value” columns. Use `spread()` on `pm25` to make a wide 
 data frame called `pm25_wide` with separate columns for each site. __Hint:__ you
 want to spread the "site" column, so identify that column as the `key` in the
 `spread()` function.
