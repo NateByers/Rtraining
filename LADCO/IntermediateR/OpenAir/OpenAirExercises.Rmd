@@ -3,6 +3,7 @@ title: 'Plotting with openair: Exercises'
 output:
   html_document:
     theme: readable
+  pdf_document: default
   word_document: default
 ---
 These exercises accompany the Plotting with `openair` tutorial: 

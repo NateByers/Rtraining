@@ -3,6 +3,7 @@ title: 'Data Manipulation 2: Exercises'
 output:
   html_document:
     theme: readable
+  pdf_document: default
   word_document: default
 ---
 
