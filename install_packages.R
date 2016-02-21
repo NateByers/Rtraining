@@ -1,7 +1,7 @@
 install.packages(
                  c('dplyr', 'devtools', 'RSQLite', 'shiny', 'leaflet', 'plotly',
-                   'ggplot2', 'maps', 'choroplethr', 'sp', 'openair', 'tidyr', 
-                   'spacetime', 'rmarkdown'), 
+                   'ggplot2', 'maps', 'choroplethr', 'choroplethrMaps', 'sp', 
+                   'openair', 'tidyr', 'spacetime', 'rmarkdown'), 
                  repos = 'http://cran.us.r-project.org', dependencies = TRUE
                  )
 library(devtools)

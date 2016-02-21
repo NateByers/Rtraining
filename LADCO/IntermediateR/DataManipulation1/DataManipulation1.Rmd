@@ -44,7 +44,7 @@ the `install_github()` function from the `devtools` package.
 
 ```{r, eval=FALSE}
 library(devtools)
-install.github("NateByers/region5air")
+install_github("NateByers/region5air")
 ```
 
 Once the package has been installed, we need to library it and load the `airdata`

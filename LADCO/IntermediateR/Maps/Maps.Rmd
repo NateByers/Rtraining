@@ -116,6 +116,7 @@ Now we can use the `state_choropleth()` function.
 
 ```{r, message = FALSE, warning = FALSE}
 library(choroplethr)
+library(choroplethrMaps)
 
 nonattain_map <- state_choropleth(nonattain, zoom = nonattain$region,
                                   title = "2008 8-hr Ozone Nonattainment",

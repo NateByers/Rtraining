@@ -160,7 +160,7 @@ meet a logical criteria among groups. You will be using `==` because it's a logi
 filter. The output will retain all of the columns.
 
 - __Use `summarize()` with `group_by()`__ when you need a summary of one column
-for each group. You will used `=` because you are creating a new column with a
+for each group. You will use `=` because you are creating a new column with a
 summarizing function. The output will only retain the columns you grouped-by and
 the one column you created with the summarizing function.
 

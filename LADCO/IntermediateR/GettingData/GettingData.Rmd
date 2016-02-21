@@ -37,7 +37,7 @@ Activity  | Description          | Minutes
 ----------|----------------------|------
 Tutorial  | Lecture              | 45
 Lab       | Exercises or review  | 30
-Break     | Free time            | 10
+Break     | Free time            | 15
 Questions | Any topic            | 15
 
 ## Expectations
@@ -50,6 +50,8 @@ to learn!
 
 - You should expect to understand the tasks that R can accomplish and use these
 tutorials as resources when you go back to work.
+
+------------------------------------------------------
 
 ## Topics
 

@@ -179,6 +179,7 @@ text(x = monitors$long, y = monitors$lat, labels = monitors$name, pos = 2)</code
 nonattain &lt;- rename(nonattain, region = state, value = areas)</code></pre>
 <p>Now we can use the <code>state_choropleth()</code> function.</p>
 <pre class="r"><code>library(choroplethr)
+library(choroplethrMaps)
 
 nonattain_map &lt;- state_choropleth(nonattain, zoom = nonattain$region,
                                   title = &quot;2008 8-hr Ozone Nonattainment&quot;,
@@ -195,8 +196,8 @@ m &lt;- addTiles(m)
 m &lt;- addMarkers(m, lng=monitors$long, lat=monitors$lat, 
                 popup=monitors$name)
 m</code></pre>
-<p><div id="htmlwidget-5269" style="width:672px;height:480px;" class="leaflet"></div>
-<script type="application/json" data-for="htmlwidget-5269">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>"}]},{"method":"addMarkers","args":[[41.60668,39.811097,39.749019,38.013248,39.159383,39.997484],[-87.304729,-86.114469,-86.186314,-87.577856,-86.504762,-86.395172],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Gary-IITRI","Indpls-Washington-Park","Indpls-Harding-St.","Evansville-Buena-Vista","Bloomington","Whitestown"],null,null]}],"limits":{"lat":[38.013248,41.60668],"lng":[-87.577856,-86.114469]}},"evals":[]}</script></p>
+<p><div id="htmlwidget-7186" style="width:672px;height:480px;" class="leaflet"></div>
+<script type="application/json" data-for="htmlwidget-7186">{"x":{"calls":[{"method":"addTiles","args":["http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>"}]},{"method":"addMarkers","args":[[41.60668,39.811097,39.749019,38.013248,39.159383,39.997484],[-87.304729,-86.114469,-86.186314,-87.577856,-86.504762,-86.395172],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Gary-IITRI","Indpls-Washington-Park","Indpls-Harding-St.","Evansville-Buena-Vista","Bloomington","Whitestown"],null,null]}],"limits":{"lat":[38.013248,41.60668],"lng":[-87.577856,-86.114469]}},"evals":[]}</script></p>
 </div>
 <div id="exercises" class="section level2">
 <h2>Exercises</h2>

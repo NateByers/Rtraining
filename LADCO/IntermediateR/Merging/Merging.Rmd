@@ -5,7 +5,8 @@ output:
     theme: readable
 ---
 
-This tutorial will cover how to merge data frames using `dplyr`. 
+This tutorial will cover how to merge data frames using `dplyr`. We will cover
+the following topics:
 
 - [Mutating joins](#mutate)
 
@@ -13,9 +14,6 @@ This tutorial will cover how to merge data frames using `dplyr`.
 
 - [A note on keys](#keys)
 
-Advanced topic:
-
-- [Joining database tables with dplyr](#database)
 
 ## Mutating joins {#mutate}
 
@@ -51,11 +49,9 @@ merge on, and in this tutorial we will refer to it as the "key".
 Below is a list of merging functions in `dplyr` that combine two data frames into
 one, also referred to as mutating joins.
 
-#### `inner_join()` 
-
-This function combines the columns from both data frames, but only keeps rows where 
-the value in the key column matches in both data frames. Below we do an inner 
-join on our two data frames.
+- __`inner_join()`__ This function combines the columns from both data frames, but 
+only keeps rows where the value in the key column matches in both data frames.
+Below we do an inner join on our two data frames.
 
 ```{r, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -67,20 +63,16 @@ Note that there is only one record for monitor 1 in the `monitors` data frame,
 but the information for that monitor is repeated in the output because there is
 more than one monitor id with the value 1 in the `pollutants` data frame.
 
-#### `left_join()`
-
-If we wanted to keep all of the pollutant information, even if there wasn't a 
-corresponding record in the `monitors` data frame, then we could use the 
-`left_join()` function.
+- __`left_join()`__ If we wanted to keep all of the pollutant information, even if 
+there wasn't a corresponding record in the `monitors` data frame, then we could 
+use the `left_join()` function.
 
 ```{r}
 left_join(pollutants, monitors, by = "monitorid")
 ```
 
-#### `full_join()`
-
-We can also keep all records from both data frames using the `full_join()` 
-function.
+- __`full_join()`__ We can also keep all records from both data frames using the
+`full_join()` function.
 
 
 ```{r}
@@ -94,9 +86,7 @@ Sometimes we would like to subset, or filter, a data frame based on the contents
 another data frame. In this kind of task we aren't combining two data frames, so
 it's not a mutating join. We are filtering, so these are called filtering joins.
 
-#### `semi_join()`
-
-Suppose we wanted to keep the `pollutants` data frame in the same
+- __`semi_join()`__ Suppose we wanted to keep the `pollutants` data frame in the same
 format, but only keep the records that also have a match in the `monitors` data
 frame. We can use the `semi_join()` function to filter the `pollutants` data
 frame.
@@ -105,12 +95,10 @@ frame.
 semi_join(pollutants, monitors, by = "monitorid")
 ```
 
-#### `anti_join()`
-
-We may also want to know what records are in a data frame that do _not_ match the
-records in another data frame. Suppose we want to know which monitors from the 
-`monitors` data frame that are not also in the `pollutants` data frame. We can use
-the `anti_join()` function.
+- __`anti_join()`__ We may also want to know what records are in a data frame 
+that do _not_ match the records in another data frame. Suppose we want to know 
+which monitors from the `monitors` data frame that are not also in the `pollutants`
+data frame. We can use the `anti_join()` function.
 
 ```{r}
 anti_join(monitors, pollutants, by = "monitorid")
@@ -148,20 +136,8 @@ frames if we supply the names of the keys in the `by` parameter.
 full_join(sites, parameters, by = c("state" = "region", "site" = "monitor"))
 ```
 
-## Exercises
+## Further reading.
 
-Go to the <a href="http://rpubs.com/NateByers/MergingExercises" target="_blank">
-exercises page</a> for this tutorial and test your comprehension of the material.
-
---------------------------------------------------
-
-## Advanced Topic
-
-### Joining database tables with `dplyr` {#database}
-
-In <a href="http://rpubs.com/NateByers/DataManip1" target="_blank">another 
-tutorial</a> we learned how to access a database table and manipulate it using
-`dplyr` functions. You can also join two database tables within the database 
-itself using `dplyr` functions. The functions translate the operation you want to
-perform into a SQL expression. Then the expression gets passed to the database and
-the result is returned to your R environment in a data-frame-like object.
+For more information about database-style joins in `dplyr`, see the vignette
+<a href="https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html"
+target="_blank">here</a>.

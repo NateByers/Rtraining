@@ -20,6 +20,8 @@ This tutorial will cover the following `openair` functions.
 
 - [`pollutionRose()`](#pollutionrose)
 
+- [`percentileRose()`](#percentilerose)
+
 - [`timePlot()`](#timeplot)
 
 - [`calendarPlot()`](#calendarplot)
@@ -54,7 +56,8 @@ chicago_air$date <- as.POSIXct(chicago_air$date, tz = "America/Chicago")
 ```
 
 If your date (and time) isn't in the default format, see the "Working with Dates
-in R" section of <a href="http://rpubs.com/kfrost14/SubsetSort" target="_blank">this tutorial</a>. If you need to provide a different time zone, run the `OlsonNames()`
+in R" section of <a href="http://rpubs.com/kfrost14/SubsetSort" target="_blank">
+this tutorial</a>. If you need to provide a different time zone, run the `OlsonNames()`
 function for a list of options.
 
 Now we just feed the first four columns of the data frame to the `summaryPlot()`
@@ -100,7 +103,20 @@ Now we'll rename the columns using the `rename()` function from `dplyr`.
 chicago_wind <- rename(chicago_wind, date = datetime, ws = wind_speed, wd = wind_dir)
 ```
 
-Then we can feed the data frame to the `windRose()` function.
+__Note__: You can also import data directly into openair using the `import()` function. 
+This will accept .csv and .txt files.  The `import()` function is just a wrapper 
+for `read.table` that has been customized for use in `openair`.  The code below
+is intended for example only.
+
+```{r}
+#           oz.data <- import('C:/mydata/myozonedata.csv', na.strings = c('-99'',-999'), 
+#                            date = 'mydate', date.format = '%Y-%m-%d %H:%M', 
+#                             ws = 'wind.speed', wd = 'wind.dir')
+
+```
+
+Now back to our `chicago_wind` data frame.  We have prepared the dates and column 
+names above so that now we can feed the data frame to the `windRose()` function.
 
 ```{r}
 windRose(chicago_wind, key.footer = "knots") # default is m/s
@@ -118,13 +134,24 @@ We can make a similar plot that will display pollutant concentrations in relatio
 to wind direction.
 
 ```{r}
-pollutionRose(chicago_wind, pollutant = "ozone")
+pollutionRose(chicago_wind, pollutant = "ozone",       # we can use the breaks parameter
+              breaks = c(0, .02, .04, .06, .07, .08))  # to create our own breakpoints
 ```
 
 We can also look at the values by time periods.
 
 ```{r, warning=FALSE}
 pollutionRose(chicago_wind, pollutant = "ozone", type = "month")
+```
+
+## `percentileRose()` {#percentilerose}
+
+The `percentileRose()` function calculates percentile levels of a pollutant and
+plots them by wind direction.  This can help you quickly visually identify potential 
+sources by wind direction.
+
+```{r, warning=FALSE}
+percentileRose(chicago_wind, pollutant = "ozone", smooth  =TRUE)
 ```
 
 ## `timePlot()` {#timeplot}
