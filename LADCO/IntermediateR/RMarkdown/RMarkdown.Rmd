@@ -1,0 +1,65 @@
+---
+title: "R Markdown"
+output: 
+  html_document: 
+    theme: readable
+---
+
+R Markdown is a platform developed by RStudio for creating dynamic documents.
+Using the R Markdown syntax, you can create HTML, PDF, and Word documents. You 
+can also make slide presentations. See RStudio's site for full documentation:
+[rmarkdown.rstudio.com](http://rmarkdown.rstudio.com/).
+
+This tutorial covers the following topics:
+
+- [Getting started](#start)
+
+- [Basic syntax](#syntax)
+
+- [Choosing an output](#output)
+
+## Getting started {#start}
+
+Starting an R Markdown document is very easy. You can click on the document
+icon in RStudio in the upper left hand corner.
+
+![](img/document.PNG)
+
+Choose R Markdown.
+
+![](img/rmarkdown.PNG)
+
+You can then enter information about the title, the author, and the output
+format.
+
+![](img/author.PNG)
+
+Once you click OK, there will be a new document in the top left corner of RStudio
+with some pre-populated information.
+
+![](img/default_markdown.PNG)
+
+The information at the very top between the triple dashes is called the header.
+That is information that determines how the document will be rendered. You can 
+edit the title, author, and date directly in the header. However, if you change
+any of the formatting, or change other information, it may break the document.
+
+To render this document in HTML, click on the "Knit HTML" button.
+
+![](img/knit.PNG)
+
+Provide a file name for the document and save it.
+
+![](img/save.PNG)
+
+RStudio will knit everything together and render the HTML in a window.
+
+![](img/html.PNG)
+
+
+## Basic syntax {#syntax}
+
+## Choosing an output {#output}
+
+## Further topics
+
