@@ -34,7 +34,7 @@ format.
 
 ![](img/author.PNG)
 
-Once you click OK, there will be a new document in the top left corner of RStudio
+Once you click OK, there will be a new document in the top left panel of RStudio
 with some pre-populated information.
 
 ![](img/default_markdown.PNG)
@@ -42,7 +42,7 @@ with some pre-populated information.
 The information at the very top between the triple dashes is called the header.
 That is information that determines how the document will be rendered. You can 
 edit the title, author, and date directly in the header. However, if you change
-any of the formatting, or change other information, it may break the document.
+any of the formatting, or change other information, it might break the document.
 
 To render this document in HTML, click on the "Knit HTML" button.
 
@@ -59,7 +59,64 @@ RStudio will knit everything together and render the HTML in a window.
 
 ## Basic syntax {#syntax}
 
+Markdown is a simple way to add formatting, like headers and bulleted lists, to
+to text. It's an alternative to a mark-up language such as HTML. R Markdown is
+a version of markdown that allows you to integrate R code and output with text.
+
+Below is some basic syntax for formatting a document.
+
+#### Emphasis
+```
+*italic*  **bold**
+  
+_italic_  __bold__
+```
+
+#### Headers
+```
+# Header 1
+
+## Header 2
+
+### Header 3
+```
+
+#### Lists
+```
+- Item 1
+- Item 2
+    + Item 2a
+    + Item 2b
+
+1. Item 1
+2. Item 2
+    + Item 2a
+    + Item 2b
+```
+
+#### R code and output
+
+![](img/chunk.png)
+
+
 ## Choosing an output {#output}
 
-## Further topics
+R Markdown can be rendered as an HTML page in a web browser. You can also choose 
+Word or PDF as an output.
+
+![](img/word.png)
+
+To compile a PDF document, you must first install Tex on your system. Go to 
+the MikTex website to download and install the necessary software:
+[miktek.org/download](http://miktex.org/download). 
+
+You can also make presentation slides using R Markdown. Select the Presentation
+option when opening a new R Markdown document.
+
+![](img/presentation.png)
+
+
+
+
+## Further reading
 
