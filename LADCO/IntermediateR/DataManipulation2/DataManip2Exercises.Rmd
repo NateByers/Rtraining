@@ -53,9 +53,9 @@ numbers in the "value"" column for each group (don't forget `na.rm = TRUE`).
 #### Advanced Exercise
 
 4. Use the pipe, `%>%`, to string together this series of `dplyr` operations: 
-subset `airdata` down to ozone (44201); group by site, datetime, and poc; use
+subset `airdata` down to ozone (44201); group by site and datetime; use
 `summarize` to find the mean value for each site/datetime combination; and filter
-down to the top 4 values for each year. *Note*: this data set only
+down to the 4th highest value for each year. *Note*: this data set only
 has 1 hour values. This exercise would make more sense with 8 hour data, for
 comparison to the NAAQS.
 
