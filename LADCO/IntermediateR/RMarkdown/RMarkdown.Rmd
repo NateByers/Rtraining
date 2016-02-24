@@ -20,7 +20,7 @@ This tutorial covers the following topics:
 
 ## Getting started {#start}
 
-Starting an R Markdown document is very easy. You can click on the document
+Starting an R Markdown document is very easy. Click on the document
 icon in RStudio in the upper left hand corner.
 
 ![](img/document.PNG)
@@ -115,8 +115,24 @@ option when opening a new R Markdown document.
 
 ![](img/presentation.png)
 
+A pre-populated R Markdown document will be created.
 
+![](img/presentation_default.png)
+
+Save the file and click "Knit HTML" to see the slides.
+
+![](img/presentation_slides.png)
 
 
 ## Further reading
+
+- You can download the RStudio cheatsheet 
+<a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf" target="_blank">here</a>.
+
+- Download the longer reference guide 
+<a href="http://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf" target="_blank">here</a>.
+
+- R Markdown can be 
+<a href="http://rmarkdown.rstudio.com/authoring_shiny.html" target="_blank">integrated
+with Shiny</a> to make interactive documents.
 
