@@ -77,6 +77,27 @@ in the data frame. The red bars at the bottom of each panel show where there are
 large segments of missing data. The panels on the right are the histograms of the
 distributions for each parameter.
 
+__Note__: If the plot does not look correct, there may be an issue with the 
+date formatting. Use the code below to save the data to a .csv file, read it
+back into R using the `import()` function from `openair`, and plot the imported
+data.
+
+```{r, warning=FALSE, message=FALSE}
+# save a .csv file of the data to your working directory
+write.csv(chicago_air, file = "chicago_air.csv", row.names = FALSE)
+
+# import the data
+chicago_air <- import(file = "chicago_air.csv", date.format = "%Y-%m-%d",
+                      tzone = "America/Chicago")
+
+summaryPlot(select(chicago_air, date:solar))
+
+```
+
+```{r, echo=FALSE}
+unlink("chicago_air.csv")
+```
+
 ## `windRose()` {#windrose}
 
 The `windRose()` function expects a data frame with columns for wind speed and wind 

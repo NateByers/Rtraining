@@ -41,7 +41,7 @@ We may want to also calculate the difference between the ozone value and a stand
 value.
 
 ```{r}
-d <- mutate(d, ozone_lag1 = lag(ozone, n = 1), diff_standard = ozone - 0.075)
+d <- mutate(chicago_air, ozone_lag1 = lag(ozone, n = 1), diff_standard = ozone - 0.075)
 head(d)
 ```
 
@@ -194,7 +194,7 @@ ozone <- filter(airdata, parameter == "44201")
 ozone <- select(ozone, site, datetime, duration, value, unit, poc)
 
 # group by certain columns
-ozone <- group_by(ozone, site, duration, poc)
+ozone <- group_by(ozone, site, duration)
 
 # find mean value for each group
 ozone <- summarize(ozone, mean = mean(value, na.rm = FALSE))
@@ -209,7 +209,7 @@ without supplying the data frame.
 ozone <- airdata %>%
   filter(parameter == "44201") %>%
   select(site, datetime, duration, value, unit, poc) %>%
-  group_by(site, duration, poc) %>%
+  group_by(site, duration) %>%
   summarize(mean = mean(value, na.rm = FALSE))
 
 head(ozone)

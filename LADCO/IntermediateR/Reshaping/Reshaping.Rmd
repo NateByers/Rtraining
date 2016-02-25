@@ -30,7 +30,7 @@ made up data for 8 hour maximum values in parts per million from 4 different mon
 over 4 consecutive days.
 
 ```{r}
-ozone_wide <- read.table(header=T, text='
+ozone_wide <- read.table(header=TRUE, text='
   day  monitor1  monitor2   monitor3  monitor4               
     1     0.029     0.040      0.010     0.032
     2     0.025     0.050      0.015     0.041

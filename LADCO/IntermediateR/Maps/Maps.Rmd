@@ -33,7 +33,7 @@ Now we can add a few monitors as points. For illustration, I've created a simple
 data frame below, with latitude and longitude information.
 
 ```{r}
-monitors <- read.table(header=T, text='
+monitors <- read.table(header=TRUE, text='
   monitorid        lat        long                       name            
           1   41.60668  -87.304729                 Gary-IITRI
           2  39.811097	-86.114469     Indpls-Washington-Park
@@ -91,7 +91,7 @@ for 8-hr ozone (2008 standard) by state in Region 5
 
 ```{r}
 
-nonattain <- read.table(header=T, text='
+nonattain <- read.table(header=TRUE, text='
       state  areas
    illinois      2
     indiana      2
@@ -156,7 +156,7 @@ To illustrate how to create spatial data objects in R, let's re-create the simpl
 `monitors` data frame, with a small modification:
 
 ```{r}
-monitors <- read.table(header=T, text='
+monitors <- read.table(header=TRUE, text='
   monitorid        long        lat     datum                    name            
           1  -87.304729   41.60668     WGS84              Gary-IITRI
           2  -86.114469  39.811097	   WGS84  Indpls-Washington-Park

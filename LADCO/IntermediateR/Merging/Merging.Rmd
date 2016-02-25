@@ -25,14 +25,14 @@ overview.
 We'll use two simple data frames to demonstrate how joins work.
 
 ```{r}
-monitors <- read.table(header=T, text='
+monitors <- read.table(header=TRUE, text='
   monitorid        lat       long                 
           1  42.467573  -87.810047     
           2  42.049148  -88.273029
           3  39.110539  -90.324080
                        ')
 
-pollutants <- read.table(header=T, text='
+pollutants <- read.table(header=TRUE, text='
   pollutant   duration    monitorid                 
       ozone         1h            1
         so2         1h            1
@@ -110,14 +110,14 @@ The `dplyr` merging functions will merge two data frames on multiple columns wit
 differing names. Below we create two data frames for illustration.
 
 ```{r}
-sites <- read.table(header=T, text='
+sites <- read.table(header=TRUE, text='
   state   site         lat       long                 
      IL      1   42.467573  -87.810047     
      IL      2   42.049148  -88.273029
      IN      1   41.68140   -87.49473
                        ')
 
-parameters <- read.table(header=T, text='
+parameters <- read.table(header=TRUE, text='
   region   monitor   parameter   duration                     
       IL         1       ozone         1h
       IN         1         so2         1h            
